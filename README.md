@@ -25,7 +25,7 @@ class Main extends Sprite
 		//create your first entities here:
 	}
 }
-```java
+```
 
 --------------------------------------------------------------------------------
 
