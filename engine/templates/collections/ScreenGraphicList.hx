@@ -1,0 +1,170 @@
+package engine.templates.collections;
+import engine.base.RueObject;
+import engine.templates.ScreenGraphic;
+
+/**
+ * ...
+ * @author Jakegr
+ */
+
+class ScreenGraphicList 
+{
+	static var Head:ScreenGraphicList;
+	var Next:ScreenGraphicList;
+	var Self:ScreenGraphicList;
+	
+	public var _HeadNode:ScreenGraphicListNode;
+	
+	private function new() 
+	 
+	{
+		Self = this;
+	}
+	
+	public static function Create():ScreenGraphicList
+	{
+		var Vessel:ScreenGraphicList;
+		if(Head != null)
+		{
+			Vessel = Head;
+			Head = Head.Next;
+		}
+		else 
+		{
+			Vessel = new ScreenGraphicList();
+		}
+		
+		return Vessel;
+	}
+	
+	public function Add(Element:ScreenGraphic):RueNodeConnection //CHANGE ME TO THE PROPER ELEMENT TO ADD
+	{
+		var Addition:ScreenGraphicListNode = ScreenGraphicListNode.Create(Element, Self);
+		var Connection:RueNodeConnection = Element.ConnectToNode(Addition); //this will return a handle to the link itself, this can be cached and told to recycle to remove itself from the list it resides in both sides.
+		Addition._TargetNode = Connection;
+		return Connection;
+	}
+	
+	public function Clear():Void //never ever remove a single element from the list, let the elements be removed from the object itself when it recycles
+	{
+		while (_HeadNode != null)
+		{
+			_HeadNode.Remove();
+		}
+	}
+	
+	public function DrawAll(ParentX:Float, ParentY:Float, Rotation:Float, CameraBound:Bool):Void
+	{
+		var Current:ScreenGraphicListNode = _HeadNode;
+		while (Current != null)
+		{
+			Current._Target._Graphic.Rotation = Rotation;
+			Current._Target.Draw(ParentX, ParentY, CameraBound);
+			Current = Current._NextNode;
+		}
+	}
+	
+	public function RecycleElements():Void
+	{
+		while (_HeadNode != null)
+		{
+			_HeadNode._Target.Recycle();
+		}
+	}
+	
+	public function Recycle():Void
+	{
+		Next = Head;
+		Head = Self;
+		while (_HeadNode != null)
+		{
+			_HeadNode.Remove();
+		}
+	}
+}
+
+class ScreenGraphicListNode implements RueNodeConnection
+{
+	static var Head:ScreenGraphicListNode;
+	var Next:ScreenGraphicListNode;
+	var Self:ScreenGraphicListNode;
+	
+	public var _Owner:ScreenGraphicList;
+	public var _Target:ScreenGraphic; //CHANGE ME TO THE PROPER ELEMENT TO HOLD
+	public var _TargetNode:RueNodeConnection;
+	
+	public var _NextNode:ScreenGraphicListNode;
+	public var _PreviousNode:ScreenGraphicListNode;
+	
+	private function new() { Self = this; }
+	
+	public static function Create(Target:ScreenGraphic, Owner:ScreenGraphicList):ScreenGraphicListNode //CHANGE ME TO THE PROPER ELEMENT TO HOLD
+	{
+		var Vessel:ScreenGraphicListNode;
+		if(Head != null)
+		{
+			Vessel = Head;
+			Head = Head.Next;
+		}
+		else 
+		{
+			Vessel = new ScreenGraphicListNode();
+		}
+		Vessel._PreviousNode = null;
+		Vessel._NextNode = null;
+		
+		Vessel._Target = Target;
+		Vessel._Owner = Owner;
+		
+		if (Owner._HeadNode != null)
+		{
+			Vessel._NextNode = Owner._HeadNode;
+			Owner._HeadNode._PreviousNode = Vessel;
+		}
+		
+		Owner._HeadNode = Vessel;
+		
+		
+		return Vessel;
+	}
+	
+	public function Remove():Void
+	{
+		_TargetNode.Recycle();
+		Recycle();
+	}
+
+	public function Recycle():Void
+	{
+		//remove from the list it lives in, return to the pool, let the element go
+		if (_Owner._HeadNode == Self)
+		{
+			//surprise, you are the head
+			if (_NextNode != null)
+			{
+				//oh noes, you have a child
+				_NextNode._PreviousNode = null; //tell your child to forget about you
+				_Owner._HeadNode = _NextNode; //and now your child is the head.
+			}
+			else
+			{
+				_Owner._HeadNode = null;
+			}
+		}
+		else
+		{
+			//well you are not the head
+			if (_PreviousNode != null)
+			{
+				_PreviousNode._NextNode = _NextNode;
+			}
+			if (_NextNode != null)
+			{
+				_NextNode._PreviousNode = _PreviousNode;
+			}
+		}
+		
+		Next = Head;
+		Head = Self;
+	}
+}
