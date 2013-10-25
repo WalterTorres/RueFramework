@@ -23,14 +23,6 @@ class TileDesc
 		UIDS = new Array<Int>();
 	}
 	
-	public function AddFrame(FrameID:String, Delay:Float = 1.0):TileDesc
-	{
-		UIDS.push(TheTileSheet.GetFrameID(FrameID));
-		DS.push(Delay);
-		FrameCount++;
-		return this;
-	}
-	
 	public function AddFrame_1(ID:Int, D:Float):TileDesc
 	{
 		FrameCount = 1; UIDS.push(ID); DS.push(D);
