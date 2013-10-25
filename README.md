@@ -5,7 +5,7 @@ This framework was made to make 2D game development quickly and efficiently, mak
 
 
 Example:
-
+```java
 import engine.base.EntityGroup;
 import engine.World;
 import flash.display.Sprite;
@@ -25,7 +25,7 @@ class Main extends Sprite
 		//create your first entities here:
 	}
 }
-
+```java
 
 --------------------------------------------------------------------------------
 
