@@ -8,12 +8,15 @@ import openfl.Assets;
  */
 class FontCollection
 {
-	public static var QuidBoldFont:Font;
+//here you would load your fonts, you can make static references to them.
+	//public static var QuidBoldFont:Font;
 
 	
 	public static function Init():Void
 	{
-		QuidBoldFont = LoadFont("quidbold");
+		//here is an example on how to load a font, you can use something else.
+		//QuidBoldFont = LoadFont("quidbold");
+		
 	}
 	
 	private static function LoadFont(Name:String):Font
