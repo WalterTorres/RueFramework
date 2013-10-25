@@ -47,8 +47,8 @@ class World
 	public var OnResizeListeners:RueCallbackList;
 	
 	public var MainSprite:Sprite;
-	public var LetterBoxOne:Shape;
-	public var LetterBoxTwo:Shape;
+	public var LetterBoxOne:Sprite;
+	public var LetterBoxTwo:Sprite;
 	
 	private var TargetWidth:Float; 
 	private var TargetHeight:Float;
@@ -64,8 +64,8 @@ class World
 		FrameRateDecimal = 1 / 60;
 		
 		MainSprite = new Sprite(); //this is the "render target" where we will be drawing our game at. please note I use a hierarchy of render targets that get drawn onto this sprite, but I draw to the leaves of this tree using drawTiles.
-		LetterBoxOne = new Shape(); //this are the letter boxes, right now they are Shapes but they could be sprites, up to you really.
-		LetterBoxTwo = new Shape();
+		LetterBoxOne = new Sprite(); //this are the letter boxes, right now they are Shapes but they could be sprites, up to you really.
+		LetterBoxTwo = new Sprite();
 		
 		Stage.addChild(MainSprite);//adding the display objects in this order we will make sure that the letter boxes will draw on top of our game. (in case there are letter boxes)
 		Stage.addChild(LetterBoxOne);
@@ -113,6 +113,8 @@ class World
 		//TheSpace.worldLinearDrag = 0;
 		Group = EntityGroup.Create();
 		UpdateSystem.CurrentGroup = Group;
+		OnResize(null);
+		EntryPoint(Group);
 	}
 	
 	public function Update(e:Event):Void
