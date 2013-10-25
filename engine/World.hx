@@ -55,7 +55,7 @@ class World
 	private var TargetWidth:Float; 
 	private var TargetHeight:Float;
 
-	public function new(Stage:Main, Width:Float, Height:Float) 
+	public function new(Stage:Main, Width:Float, Height:Float, EntryPoint:Void->Void) 
 	{
 		Stage.stage.scaleMode = StageScaleMode.NO_SCALE; //if this is not set by default just make sure it is, since we will be manipulating the scaling manually.
 		Lib.current.stage.addEventListener(Event.RESIZE, OnResize); //I added this for testing, since when targeting a windows or flash I can change the size of the screen dynamically, I see the changes working.
