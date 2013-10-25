@@ -47,13 +47,13 @@ class TileSheetEntry
 	public function new(File:String,  IsCameraBound:Bool = false) 
 	{
 		var Data:BitmapData;
-		super();
+
 		_IsCameraBound = IsCameraBound;
 		Data = Assets.getBitmapData("textures/" + File + ".png");
 		TheSheet = new Tilesheet(Data);
-		TileStack = new Array<Float>();
+
 		Offsets = new Array<FloatTupe>();
-		InternalID = 0;
+
 
 		var JsonFileData = Json.parse(Assets.getText("json/" + File + ".json"));
 		var dFrames:Array<Dynamic> = cast(JsonFileData.frames);
