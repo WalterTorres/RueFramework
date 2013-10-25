@@ -3,9 +3,7 @@ package engine;
 import engine.base.EntityGroup;
 import engine.components.PositionComponent;
 import engine.gameElements.CollisionResponses;
-import engine.helpers.FontCollection;
 import engine.helpers.RueMath;
-import engine.helpers.tileSheetData.TileSheetInit;
 import engine.helpers.TileSheetEntry;
 import engine.systems.InputSystem;
 import engine.systems.RebirthSystem;
@@ -106,18 +104,15 @@ class World
 		CollisionResponses.SetUpRules();
 		InputSystem.Init(Stage);
 		UpdateSystem.Init();
-		TileSheetInit.InitialSpriteSheetSetup();
 		MouseInputSystem.Init(Stage);
 		TileRenderSystem.Init(Width, Height, ScreenRenderTarget, GuiRenderTarget, BackgroundRenderTarget);
 		SoundSystem.Init();
-		FontCollection.Init();
 		RebirthSystem.Init();
 		Profiler.Init(GuiRenderTarget);
 		//TheSpace.worldAngularDrag = 0;
 		//TheSpace.worldLinearDrag = 0;
 		Group = EntityGroup.Create();
 		UpdateSystem.CurrentGroup = Group;
-		EntryPoint(Group);
 	}
 	
 	public function Update(e:Event):Void
