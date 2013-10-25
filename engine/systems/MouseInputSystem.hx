@@ -4,7 +4,6 @@ package engine.systems;
 import engine.helpers.render.DrawStack;
 import engine.helpers.roxstudio.haxe.gesture.RoxGestureEvent;
 import engine.helpers.RueMath;
-import engine.helpers.tileSheetData.ClickParticlesAniDesc;
 import engine.systems.touches.RueTouch;
 import engine.World;
 import flash.display.Bitmap;
