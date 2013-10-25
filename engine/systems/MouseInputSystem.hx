@@ -32,8 +32,9 @@ class MouseInputSystem
 	public static var XRate:Float = 1;
 	public static var YRate:Float = 1;
 	
-	
-	
+	public static var LetterBoxOffsetX:Float = 0;
+	public static var LetterBoxOffsetY:Float = 0;
+
 	//touches
 	public static var TouchOne:RueTouch = new RueTouch();
 	public static var TouchTwo:RueTouch = new RueTouch();
@@ -63,14 +64,8 @@ class MouseInputSystem
 	
 	private static var GestureAgent:RoxGestureAgent = null;
 	
-	
-	public static var RenderTarget:DrawStack;
-	
 	public static function Init(TheStage:Main):Void
 	{
-		
-		RenderTarget = DrawStack.Create(ClickParticlesAniDesc.TheSpriteSheet, 2);
-		
 		if (Accelerometer.isSupported)
 		{
 			Accelerometersupported = true;
@@ -125,8 +120,8 @@ class MouseInputSystem
 	{
 		//this will be true for all the instances
 		ClickedThisTick = true;
-		X = A.stageX*XRate;
-		Y = A.stageY*YRate;
+		X = A.stageX*XRate + LetterBoxOffsetX;
+		Y = A.stageY*YRate + LetterBoxOffsetY;
 		
 		var ZoomedMousePositionX:Float = (X - TileRenderSystem.InitialHalfWidth) / TileRenderSystem.Zoom;
 		var ZoomedMousePositionY:Float = (Y - TileRenderSystem.InitialHalfHeight) / TileRenderSystem.Zoom;
@@ -165,8 +160,8 @@ class MouseInputSystem
 	
 	private static function OnTouchUp(A:MouseEvent):Void
 	{
-		X = A.stageX*XRate;
-		Y = A.stageY*YRate;
+		X = A.stageX*XRate + LetterBoxOffsetX;
+		Y = A.stageY*YRate + LetterBoxOffsetY;
 		
 		ClickedThisTick = false;
 		if (!Dragging)
@@ -208,8 +203,8 @@ class MouseInputSystem
 				Dragging = true;
 			}
 		}
-		X = A.stageX*XRate;
-		Y = A.stageY * YRate;
+		X = A.stageX*XRate + LetterBoxOffsetX;
+		Y = A.stageY * YRate + LetterBoxOffsetY;
 		
 		var ZoomedMousePositionX:Float = (X - TileRenderSystem.InitialHalfWidth) / TileRenderSystem.Zoom;
 		var ZoomedMousePositionY:Float = (Y - TileRenderSystem.InitialHalfHeight) / TileRenderSystem.Zoom;
