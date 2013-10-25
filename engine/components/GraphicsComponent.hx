@@ -127,27 +127,6 @@ class GraphicsComponent
 		TargetCanvas.AddToRender(Layer, ID, X + TileRenderSystem.CameraX*CameraRatioX, Y + TileRenderSystem.CameraY*CameraRatioY, Rotation);
 	}
 	
-	public function ContainsClick(X:Int, Y:Int, PositionX:Float, PositionY:Float):Bool
-	{
-		var RealX:Int = X - cast(PositionX);
-		var RealY:Int = Y - cast(PositionY);
-		var Back = Description.TheTileSheet.Data.getPixel(RealX, RealY);
-		return Back != 0;
-	}
-	
-	//EXPENSIVE DRAW CALL, USE IT ONLY WHEN YOU REALLY NEED TO. this will only draw one single thing to a sprite, this will not work for more than one element onto the same render target
-	public function RenderToSprite(X:Float, Y:Float, TheSprite:Sprite):Void
-	{
-		TheSprite.graphics.clear();
-		var ID:Int = Description.UIDS[CurrentFrame];
-		var Data:Array<Float> = [];
-		Data[0] = X;
-		Data[1] = Y;
-		Data[2] = ID;
-		
-		Description.TheTileSheet.TheSheet.drawTiles(TheSprite.graphics, Data, true);
-	}
-	
 	public function Recycle():Void
 	{
 		Next = Head;
