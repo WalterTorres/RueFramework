@@ -13,13 +13,20 @@ class Profiler
 	static var LastTime:Float;
 	public static var ElapsedTime:Float;
 	public static var FPS:Int;
-	private static var InternalTick:Float;
+	
+	public static var Text:TextField;
+	public static var InternalTick:Float;
 	private static var TickCount:Int;
 	public static var IsPaused:Bool;
 	private static var TheStage:Sprite;
+	
 	static var ReportAllowed:Bool;
+	
 	private static var TimersCollection:Array<RueTimer>;
+	
 	private static var ReportingTimer:Float;
+	
+	private static var RenderTarget:Sprite;
 	
 	public static function Init(Stage:Sprite):Void
 	{
@@ -27,6 +34,15 @@ class Profiler
 		InternalTick = 0;
 		LastTime = 0;
 		ElapsedTime = 0;
+		
+		RenderTarget = Stage;
+		
+		Text = new TextField();
+		Text.scaleX = 2;
+		Text.scaleY = 2;
+		Text.width = 20;
+		Text.height = 20;
+		Stage.addChild(Text);
 	
 		TheStage = Stage;
 		
@@ -36,8 +52,20 @@ class Profiler
 	
 	public static function AddTimer(Name:String):Int
 	{
+		
 		TimersCollection.push(new RueTimer(TheStage, TimersCollection.length, Name));
 		return TimersCollection.length - 1;
+		
+	}
+	
+	public function HideFPS():Void
+	{
+		RenderTarget.removeChild(Text);
+	}
+	
+	public function ShowFPS():Void
+	{
+		RenderTarget.addChild(Text);
 	}
 	
 	public static function Start(ID:Int):Void
@@ -61,22 +89,19 @@ class Profiler
 	
 	public static function Tick():Void
 	{
-		if (!IsPaused)
+		ElapsedTime = Timer.stamp() - LastTime;
+		LastTime = Timer.stamp();
+		InternalTick += ElapsedTime;
+		TickCount++;
+		if (InternalTick >= 1.0)
 		{
-			ElapsedTime = Timer.stamp() - LastTime;
-			LastTime = Timer.stamp();
-			InternalTick += ElapsedTime;
-			TickCount++;
-			if (InternalTick >= 1.0)
-			{
-				ReportAllowed = true;
-				InternalTick -= 1.0;
-				FPS = TickCount;
-				
-				Text.text = cast(FPS);// + " SpriteCount: " + cast(MaxEntity.Count);
-				
-				TickCount = 0;
-			}
+			ReportAllowed = true;
+			InternalTick -= 1.0;
+			FPS = TickCount;
+			
+			Text.text = cast(FPS);// + " SpriteCount: " + cast(MaxEntity.Count);
+			
+			TickCount = 0;
 		}
 	}
 	
