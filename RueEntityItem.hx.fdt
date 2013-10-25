@@ -1,0 +1,71 @@
+package $(Package);
+
+import engine.base.Entity;
+import engine.base.EntityGroup;
+import engine.helpers.Profiler;
+import engine.systems.MouseInputSystem;
+import engine.systems.SoundSystem;
+import engine.components.PhysicsComponent;
+import engine.components.GraphicsComponent;
+import engine.World;
+import nape.phys.BodyType;
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+class $(FileName) $(CSLB) extends Entity
+{
+	static var Head:$(FileName);
+	var Next:$(FileName);
+	var Self:$(FileName);
+	
+	private function new() 
+	{
+		super();
+		Self = this;
+	}
+	
+	public static function Create(Group:EntityGroup):$(FileName)
+	{
+		var Vessel:$(FileName);
+		if(Head != null) { Vessel = Head; Head = Head.Next; }
+		else { Vessel = new $(FileName)(); }
+		Vessel.Setup(Group);
+		
+		return Vessel;
+	}
+	
+	override public function PreUpdate():Void
+	{
+		DoesPreUpdate = false;
+	}
+	
+	override public function Update():Void
+	{
+		DoesUpdate = false;
+	}
+	
+	override public function Draw():Void
+	{
+		DoesDraw = false;
+	}
+	
+	override public function Recycle():Void
+	{
+		if(!InPool)
+		{
+			super.Recycle();
+		}
+		
+	}
+	
+	override public function OnRebirth():Void
+	{
+		Next = Head;
+		Head = Self;
+	}
+		
+	
+}

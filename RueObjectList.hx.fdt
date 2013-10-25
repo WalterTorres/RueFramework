@@ -1,0 +1,152 @@
+package $(Package);
+import engine.base.RueObject;
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+class $(FileName) $(CSLB)
+{
+	static var Head:$(FileName);
+	var Next:$(FileName);
+	var Self:$(FileName);
+	
+	public var _HeadNode:$(FileName)Node;
+	
+	private function new() $(CSLB) 
+	{
+		Self = this;
+	}
+	
+	public static function Create():$(FileName)
+	{
+		var Vessel:$(FileName);
+		if(Head != null)
+		{
+			Vessel = Head;
+			Head = Head.Next;
+		}
+		else 
+		{
+			Vessel = new $(FileName)();
+		}
+		
+		return Vessel;
+	}
+	
+	public function Add(Element:RueObject):RueNodeConnection //CHANGE ME TO THE PROPER ELEMENT TO ADD
+	{
+		var Addition:$(FileName)Node = $(FileName)Node.Create(Element, Self);
+		var Connection:RueNodeConnection = Element.ConnectToNode(Addition); //this will return a handle to the link itself, this can be cached and told to recycle to remove itself from the list it resides in both sides.
+		Addition._TargetNode = Connection;
+		return Connection;
+	}
+	
+	public function Clear():Void //never ever remove a single element from the list, let the elements be removed from the object itself when it recycles
+	{
+		while (_HeadNode != null)
+		{
+			_HeadNode.Remove();
+		}
+	}
+	
+	public function Recycle():Void
+	{
+		Next = Head;
+		Head = Self;
+		while (_HeadNode != null)
+		{
+			_HeadNode.Remove();
+		}
+	}
+}
+
+class $(FileName)Node implements RueNodeConnection
+{
+	static var Head:$(FileName)Node;
+	var Next:$(FileName)Node;
+	var Self:$(FileName)Node;
+	
+	public var _Owner:$(FileName);
+	public var _Target:RueObject; //CHANGE ME TO THE PROPER ELEMENT TO HOLD
+	public var _TargetNode:RueNodeConnection;
+	
+	public var _NextNode:$(FileName)Node;
+	public var _PreviousNode:$(FileName)Node;
+	
+	private function new() { Self = this; }
+	
+	public static function Create(Target:RueObject, Owner:$(FileName)):$(FileName)Node //CHANGE ME TO THE PROPER ELEMENT TO HOLD
+	{
+		var Vessel:$(FileName)Node;
+		if(Head != null)
+		{
+			Vessel = Head;
+			Head = Head.Next;
+		}
+		else 
+		{
+			Vessel = new $(FileName)Node();
+		}
+		Vessel._PreviousNode = null;
+		Vessel._NextNode = null;
+		
+		Vessel._Target = Target;
+		Vessel._Owner = Owner;
+		
+		if (Owner._HeadNode != null)
+		{
+			Vessel._NextNode = Owner._HeadNode;
+			Owner._HeadNode._PreviousNode = Vessel;
+		}
+		
+		Owner._HeadNode = Vessel;
+		
+		
+		return Vessel;
+	}
+	
+	public function Remove():Void
+	{
+		_TargetNode.Recycle();
+		Recycle();
+	}
+
+	public function Recycle():Void
+	{
+		//remove from the list it lives in, return to the pool, let the element go
+		if (_Owner._HeadNode == Self)
+		{
+			//surprise, you are the head
+			if (_NextNode != null)
+			{
+				//oh noes, you have a child
+				_NextNode._PreviousNode = null; //tell your child to forget about you
+				_Owner._HeadNode = _NextNode; //and now your child is the head.
+			}
+			else
+			{
+				_Owner._HeadNode = null;
+			}
+		}
+		else
+		{
+			//well you are not the head
+			if (_PreviousNode != null)
+			{
+				_PreviousNode._NextNode = _NextNode;
+			}
+			if (_NextNode != null)
+			{
+				_NextNode._PreviousNode = _PreviousNode;
+			}
+		}
+		
+		Next = Head;
+		Head = Self;
+	}
+}
+
+
+
