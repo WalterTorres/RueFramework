@@ -23,18 +23,9 @@ class DrawStack extends RueObject
 	
 	var TheSheet:TileSheetEntry;
 	public var Target:Sprite;
+	var Owner:Sprite;
 	
-	var _OneCount:Int;
-	public var LayerOne:DrawNode;
-	
-	var _TwoCount:Int;
-	public var LayerTwo:DrawNode;
-	
-	var _ThreeCount:Int;
-	public var LayerThree:DrawNode;
-	
-	var _FourCount:Int;
-	public var LayerFour:DrawNode;
+	var _InnerLayers:Array<DrawNodeCountPair>;
 	
 	static var ElementNumber:Int = 4;
 	var TheLayer:Int;
@@ -64,22 +55,12 @@ class DrawStack extends RueObject
 	// The global layer on which we will be adding our child target
 	// The scale X
 	// The scale Y
-	public static function Create(TileSheet:TileSheetEntry, Layer:Int = 0, ScaleX:Float = 1, ScaleY:Float = 1, Alpha:Float = 1.0, RenderOnce:Bool = false ):DrawStack
+	public static function Create(TileSheet:TileSheetEntry, Owner:Sprite, Layer:Int = 0, ScaleX:Float = 1, ScaleY:Float = 1, Alpha:Float = 1.0, RenderOnce:Bool = false ):DrawStack
 	{
 		var Vessel:DrawStack;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new DrawStack(); }
-		
-		Vessel._OneCount = 0;
-		Vessel._TwoCount = 0;
-		Vessel._ThreeCount = 0;
-		Vessel._FourCount = 0;
-		
-		Vessel.LayerOne = null;
-		Vessel.LayerTwo = null;
-		Vessel.LayerThree = null;
-		Vessel.LayerFour = null;
-		
+
 		Vessel.TheSheet = TileSheet;
 		Vessel.Target = new Sprite();
 		Vessel.Target.scaleX = ScaleX;
@@ -101,13 +82,15 @@ class DrawStack extends RueObject
 		Vessel._CurrentX = 0;
 		Vessel._CurrentY = 0;
 		
-		switch(Layer)
+		Vessel._InnerLayers = new Array<DrawNodeCountPair>();
+		for (i in 0...Layer)
 		{
-			case 0: { World.Self.BackgroundRenderTarget.addChild(Vessel.Target); }
-			case 1: { World.Self.ScreenRenderTarget.addChild(Vessel.Target); }
-			default: { World.Self.GuiRenderTarget.addChild(Vessel.Target); }
+			Vessel._InnerLayers[i] = DrawNodeCountPair.Create();
 		}
 		
+		Vessel.Owner = Owner;
+		Owner.addChild(Vessel.Target);
+
 		Layers.Add(Vessel);//automatically adds itself to the rendering
 		return Vessel;
 	}
@@ -161,60 +144,27 @@ class DrawStack extends RueObject
 	
 	override public function Recycle():Void
 	{
-		switch(TheLayer)
-		{
-			case 0: { World.Self.BackgroundRenderTarget.removeChild(Target); }
-			case 1: { World.Self.ScreenRenderTarget.removeChild(Target); }
-			default: { World.Self.GuiRenderTarget.removeChild(Target); }
-		}
 		Target = null;
+		
+		for (i in 0..._InnerLayers.length)
+		{
+			_InnerLayers[i].Recycle();
+		}
+		
+		_InnerLayers = null;
 		
 		Next = Head;
 		Head = Self;
-		
+		Owner.removeChild(Target);
 		super.Recycle();
 	}
 	
 	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float):Void
 	{
-		switch(Layer)
-		{
-			case 0:
-			{
-				_OneCount++;
-				var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
-				var NewNode:DrawNode = DrawNode.Create(X-Offset.ValueOne, Y-Offset.ValueTwo, UniqueID, Rotation);
-				NewNode.NextNode = LayerOne;
-				LayerOne = NewNode;
-			}
-			
-			case 1:
-			{
-				_TwoCount++;
-				var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
-				var NewNode:DrawNode = DrawNode.Create(X-Offset.ValueOne, Y-Offset.ValueTwo, UniqueID, Rotation);
-				NewNode.NextNode = LayerTwo;
-				LayerTwo = NewNode;
-			}
-			
-			case 2:
-			{
-				_ThreeCount++;
-				var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
-				var NewNode:DrawNode = DrawNode.Create(X-Offset.ValueOne, Y-Offset.ValueTwo, UniqueID, Rotation);
-				NewNode.NextNode = LayerThree;
-				LayerThree = NewNode;
-			}
-			
-			case 3:
-			{
-				_FourCount++;
-				var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
-				var NewNode:DrawNode = DrawNode.Create(X-Offset.ValueOne, Y-Offset.ValueTwo, UniqueID, Rotation);
-				NewNode.NextNode = LayerFour;
-				LayerFour = NewNode;
-			}
-		}
+		var LayerToAdd:DrawNodeCountPair = _InnerLayers[Layer];
+		var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
+		var NewNode:DrawNode = DrawNode.Create(X - Offset.ValueOne, Y - Offset.ValueTwo, UniqueID, Rotation);
+		LayerToAdd.Add(NewNode);
 	}
 	
 	public function RenderAll():Void
@@ -228,52 +178,29 @@ class DrawStack extends RueObject
 		
 		if (!_AllowedToRender) { return; }
 		Target.graphics.clear();
-		if (_OneCount == 0 && _TwoCount == 0 && _ThreeCount == 0 && _FourCount == 0) { return; }
-		var First:Int = _OneCount * ElementNumber;
-		var Second:Int = _OneCount * ElementNumber + _TwoCount * ElementNumber;
-		var Third:Int = _OneCount * ElementNumber + _TwoCount * ElementNumber + _ThreeCount * ElementNumber;
-		var Forth:Int = _OneCount * ElementNumber + _TwoCount * ElementNumber + _ThreeCount * ElementNumber + _FourCount*ElementNumber;
-		_OneCount = 0;
-		_TwoCount = 0;
-		_ThreeCount = 0;
-		_FourCount = 0;
+		
+		
+		
+		var CurrentCount:Int = 0;
 		var TileStack:Array<Float> = new Array<Float>();
-		while (LayerOne != null)
+		for (i in 0..._InnerLayers.length)
 		{
-			TileStack[--First] = -LayerOne.Rotation;
-			TileStack[--First] = LayerOne.Frame;
-			TileStack[--First] = LayerOne.PositionY;
-			TileStack[--First] = LayerOne.PositionX;
-			LayerOne.Recycle();
-			LayerOne = LayerOne.NextNode;
+			var Current:DrawNodeCountPair = _InnerLayers[i];
+			CurrentCount += Current._Count*ElementNumber;
+			var CountDown:Int = CurrentCount;
+			var StackHead:DrawNode = Current._DrawHeadNode;
+			while (StackHead != null)
+			{
+				TileStack[--CountDown] = -StackHead.Rotation;
+				TileStack[--CountDown] = StackHead.Frame;
+				TileStack[--CountDown] = StackHead.PositionY;
+				TileStack[--CountDown] = StackHead.PositionX;
+				StackHead.Recycle();
+				StackHead = StackHead.NextNode;
+			}
+			Current.Flush();
 		}
-		while (LayerTwo != null)
-		{
-			TileStack[--Second] = -LayerTwo.Rotation;
-			TileStack[--Second] = LayerTwo.Frame;
-			TileStack[--Second] = LayerTwo.PositionY;
-			TileStack[--Second] = LayerTwo.PositionX;
-			LayerTwo.Recycle();
-			LayerTwo = LayerTwo.NextNode;
-		}
-		while (LayerThree != null)
-		{
-			TileStack[--Third] = -LayerThree.Rotation;
-			TileStack[--Third] = LayerThree.Frame;
-			TileStack[--Third] = LayerThree.PositionY;
-			TileStack[--Third] = LayerThree.PositionX;
-			LayerThree.Recycle();
-			LayerThree = LayerThree.NextNode;
-		}
-		while (LayerFour != null)
-		{
-			TileStack[--Forth] = -LayerFour.Rotation;
-			TileStack[--Forth] = LayerFour.Frame;
-			TileStack[--Forth] = LayerFour.PositionY;
-			TileStack[--Forth] = LayerFour.PositionX;
-			LayerFour.Recycle();
-			LayerFour = LayerFour.NextNode;
-		}
+		
 		TheSheet.TheSheet.drawTiles(Target.graphics, TileStack, true, Tilesheet.TILE_ROTATION);
 		if (_RenderOnce)
 		{

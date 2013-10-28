@@ -47,6 +47,16 @@ class DrawNode
 		return Vessel;
 	}
 	
+	public function RecycleInChain():Void
+	{
+		Recycle();
+		if (NextNode != null)
+		{
+			NextNode.RecycleInChain();
+		}
+		
+	}
+	
 	public inline function Recycle():Void
 	{
 		Next = Head;
