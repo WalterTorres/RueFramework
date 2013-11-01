@@ -63,12 +63,17 @@ class MotionStep extends RueObject implements IMotionStep
 	{
 		if(!InPool)
 		{
-			if (_NextStep != null)
-			{
-				_NextStep.Recycle();
-			}
 			_Operator.Recycle();
 			super.Recycle();
+		}
+	}
+	
+	public function KillButton():Void
+	{
+		Recycle();
+		if (_NextStep != null)
+		{
+			_NextStep.KillButton();
 		}
 	}
 	

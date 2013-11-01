@@ -28,6 +28,16 @@ class TranslateStep extends RueObject implements IMotionStep
 		Self = this;
 	}
 	
+	/**
+	 * This step will interpolate the view from wherever it is by the ammount specified, at the speed specified.
+	 * 
+	 * @param	AmountX		The amount the view will translate in the X axis.
+	 * @param	AmountY		The amount the view will translate in the Y axis.
+	 * @param	SpeedX		The speed the view will travel the desired ammount X (Speed pixels a second).
+	 * @param	SpeedY		The speed the view will travel the desired ammount Y (Speed pixels a second).
+	 * @param	Target		The target view for the translation.
+	 * @return
+	 */
 	public static function Create(AmountX:Float, AmountY:Float, SpeedX:Float, SpeedY:Float, Target:RueView):TranslateStep
 	{
 		var Vessel:TranslateStep;

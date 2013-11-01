@@ -10,6 +10,7 @@ import engine.components.GraphicsComponent;
 import engine.templates.collections.RueCallback;
 import engine.templates.collections.RueCallbackList;
 import engine.templates.RueView;
+import engine.templates.viewHelper.steps.CallStep;
 import engine.templates.viewHelper.steps.TranslateStep;
 import engine.templates.viewHelper.steps.WaitStep;
 import engine.World;
@@ -85,7 +86,7 @@ class ViewManipulator
 		{
 			if (_CurrentlyDoing != null)
 			{
-				_CurrentlyDoing.Recycle();
+				_CurrentlyDoing.KillButton();
 			}
 			
 			_OnAllSequencesFinished.TriggerAll();
@@ -102,13 +103,13 @@ class ViewManipulator
 	}
 	
 	//{MANIPULATION FUNCTIONS
-	public function AddOnSequenceFinished(AddMe:Void->Void):ViewManipulator
+	public function StepAddOnSequenceFinished(AddMe:Void->Void):ViewManipulator
 	{
 		_OnAllSequencesFinished.Add(RueCallback.Create(AddMe));
 		return Self;
 	}
 	
-	public function AddToXY(ToX:Float, ToY:Float, XSpeed:Float = 10, YSpeed:Float = 10):ViewManipulator
+	public function StepAddToXY(ToX:Float, ToY:Float, XSpeed:Float = 10, YSpeed:Float = 10):ViewManipulator
 	{
 		if (_CurrentlyDoing != null){
 			_CurrentlyDoing.AddStep(MotionStep.Create(TranslateStep.Create(ToX, ToY, XSpeed, YSpeed, _Target),Self));
@@ -119,7 +120,7 @@ class ViewManipulator
 		return Self;
 	}
 	
-	public function Wait(ForThisLong:Float):ViewManipulator
+	public function StepWait(ForThisLong:Float):ViewManipulator
 	{
 		if (_CurrentlyDoing != null)
 		{
@@ -128,6 +129,19 @@ class ViewManipulator
 		else
 		{
 			_CurrentlyDoing = MotionStep.Create(WaitStep.Create(ForThisLong), Self);
+		}
+		return Self;
+	}
+	
+	public function StepCall(DoThis:Void->Void):ViewManipulator
+	{
+		if (_CurrentlyDoing != null)
+		{
+			_CurrentlyDoing.AddStep(MotionStep.Create(CallStep.Create(DoThis), Self));
+		}
+		else
+		{
+			_CurrentlyDoing = MotionStep.Create(CallStep.Create(DoThis), Self);
 		}
 		return Self;
 	}
