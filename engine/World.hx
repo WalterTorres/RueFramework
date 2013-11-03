@@ -175,9 +175,13 @@ class World
 		//fix the resolution
 		var ScaleX:Float = Lib.current.stage.stageWidth / TargetWidth;  //first we get the scales from the current device we are targetting by comparing it with the target resolution.
 		var ScaleY:Float = Lib.current.stage.stageHeight / TargetHeight;
+		TileRenderSystem.ActualScaleX = ScaleX;
+		TileRenderSystem.ActualScaleY = ScaleY;
 		var Smallest:Float = ScaleX >= ScaleY ? ScaleY : ScaleX; //after that we need to make sure we target the smallest possible resolution, this is for properly scaling the entire screen.
 		var ScreenActualSizeWidth:Float = TargetWidth * Smallest; //after scaling the screen we will end up with a "real" screen size, this is used for the letter boxing offset
 		var ScreenActualSizeHeight:Float = TargetHeight * Smallest;
+		TileRenderSystem.RealScreenWidth = ScreenActualSizeWidth;
+		TileRenderSystem.RealScreenHeight = ScreenActualSizeHeight;
 		var OffsetX:Float = ((Lib.current.stage.stageWidth - ScreenActualSizeWidth)/2)/Smallest; //we need to compare the device screen resolution to get the half of the offset needed, we divie by the smallest to bring it to the actual resolution the entire screen will be.
 		var OffsetY:Float = ((Lib.current.stage.stageHeight - ScreenActualSizeHeight)/2)/Smallest;
 

@@ -26,7 +26,7 @@ class RueView extends RueObject
 	var Next:RueView;
 	
 	var _DrawChildren:ViewElements;
-	var _Graphics:ScreenGraphicList;
+	public var _Graphics:ScreenGraphicList;
 	
 	var _CameraBound:Bool;
 	
@@ -112,6 +112,7 @@ class RueView extends RueObject
 	public function Dragging():Void
 	{
 		if (!_IsScrollable || !_IsDragging) { return; }
+		if (_MaxDragX == 0 && _MaxDragY == 0) { _IsDragging = false; return; }
 		var DeltaX:Float = MouseInputSystem.X - _LastDragX;
 		var DeltaY:Float = MouseInputSystem.Y - _LastDragY;
 		
@@ -121,12 +122,12 @@ class RueView extends RueObject
 		if (RueMath.Abs(_CurrentDragX) > _MaxDragX)
 		{
 			_CurrentDragX = RueMath.AbsoluteDirection(_CurrentDragX) * _MaxDragX;
-			_IsDragging = false;
+			//_IsDragging = false;
 		}
 		if (RueMath.Abs(_CurrentDragY) > _MaxDragY)
 		{
 			_CurrentDragY = RueMath.AbsoluteDirection(_CurrentDragY) * _MaxDragY;
-			_IsDragging = false;
+			//_IsDragging = false;
 		}
 		
 		_LastDragX = MouseInputSystem.X;
@@ -141,7 +142,7 @@ class RueView extends RueObject
 			if (_CurrentDragX != 0)
 			{
 				var Dir:Int = RueMath.AbsoluteDirection(_CurrentDragX);
-				_CurrentDragX += Dir * -1 * 5.5 * RueMath.Abs(_CurrentDragX) * Profiler.ElapsedTime;
+				_CurrentDragX += Dir * -1 * _ElasticSpeedX * RueMath.Abs(_CurrentDragX) * Profiler.ElapsedTime;
 				if (_CurrentDragX == 0 || Dir != RueMath.AbsoluteDirection(_CurrentDragX))
 				{
 					_CurrentDragX = 0;
@@ -150,7 +151,7 @@ class RueView extends RueObject
 			if (_CurrentDragY != 0)
 			{
 				var Dir:Int = RueMath.AbsoluteDirection(_CurrentDragY);
-				_CurrentDragY += Dir * -1 * 5.5 * RueMath.Abs(_CurrentDragY)  * Profiler.ElapsedTime;
+				_CurrentDragY += Dir * -1 * _ElasticSpeedY * RueMath.Abs(_CurrentDragY)  * Profiler.ElapsedTime;
 				if (_CurrentDragY == 0 || Dir != RueMath.AbsoluteDirection(_CurrentDragY))
 				{
 					_CurrentDragY = 0;

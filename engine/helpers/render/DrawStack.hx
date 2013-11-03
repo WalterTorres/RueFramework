@@ -61,7 +61,7 @@ class DrawStack extends RueObject
 	// The global layer on which we will be adding our child target
 	// The scale X
 	// The scale Y
-	public static function Create(TileSheet:TileSheetEntry, Owner:Sprite, Layer:Int = 0, ScaleX:Float = 1, ScaleY:Float = 1, Alpha:Float = 1.0, RenderOnce:Bool = false ):DrawStack
+	public static function Create(TileSheet:TileSheetEntry, Owner:Sprite, Layer:Int = 1, ScaleX:Float = 1, ScaleY:Float = 1, Alpha:Float = 1.0, RenderOnce:Bool = false ):DrawStack
 	{
 		var Vessel:DrawStack;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -89,6 +89,7 @@ class DrawStack extends RueObject
 		Vessel._CurrentY = 0;
 		
 		Vessel._InnerLayers = new Array<DrawNodeCountPair>();
+		if (Layer <= 0) { Layer = 1; }
 		for (i in 0...Layer)
 		{
 			Vessel._InnerLayers[i] = DrawNodeCountPair.Create();
@@ -170,20 +171,27 @@ class DrawStack extends RueObject
 	
 	override public function Recycle():Void
 	{
-		Target = null;
-		_FocusRect = null;
-		
-		for (i in 0..._InnerLayers.length)
+		if (!InPool)
 		{
-			_InnerLayers[i].Recycle();
+			_FocusRect = null;
+			
+			for (i in 0..._InnerLayers.length)
+			{
+				_InnerLayers[i].Recycle();
+			}
+			
+			_InnerLayers = null;
+			
+			Owner.removeChild(Target);
+			Target = null;
+			super.Recycle();
 		}
-		
-		_InnerLayers = null;
-		
+	}
+	
+	override public function OnRebirth():Void 
+	{
 		Next = Head;
 		Head = Self;
-		Owner.removeChild(Target);
-		super.Recycle();
 	}
 	
 	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float, Alpha:Float):Void

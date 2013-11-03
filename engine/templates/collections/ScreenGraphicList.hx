@@ -64,6 +64,17 @@ class ScreenGraphicList
 		}
 	}
 	
+	public function ChangeAlphaOfAllTo(Alpha:Float):Void
+	{
+		var Current:ScreenGraphicListNode = _HeadNode;
+		while (Current != null)
+		{
+			Current._Target._Graphic.Alpha = Alpha;
+			Current = Current._NextNode;
+		}
+	}
+	
+	
 	public function RecycleElements():Void
 	{
 		while (_HeadNode != null)

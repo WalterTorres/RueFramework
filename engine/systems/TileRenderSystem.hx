@@ -24,6 +24,9 @@ import nape.util.BitmapDebug;
 
 class TileRenderSystem 
 {
+	public static var RealScreenWidth:Float = 0;
+	public static var RealScreenHeight:Float = 0;
+	
 	public static var LetterBoxOffsetX:Float = 0;
 	public static var LetterBoxOffsetY:Float = 0;
 	

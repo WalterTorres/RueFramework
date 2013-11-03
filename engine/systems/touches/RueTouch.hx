@@ -34,7 +34,7 @@ class RueTouch
 	
 	public function Dragged():Bool
 	{
-		return (RueMath.Abs(_InitialX - _X) + RueMath.Abs(_InitialY - _Y)) > 50;
+		return (RueMath.Abs(_InitialX - _X) + RueMath.Abs(_InitialY - _Y)) > 10;
 	}
 	
 	public function GetTickDeltaX():Float

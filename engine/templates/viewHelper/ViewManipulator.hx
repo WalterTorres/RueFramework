@@ -10,6 +10,7 @@ import engine.components.GraphicsComponent;
 import engine.templates.collections.RueCallback;
 import engine.templates.collections.RueCallbackList;
 import engine.templates.RueView;
+import engine.templates.viewHelper.steps.AlphaStep;
 import engine.templates.viewHelper.steps.CallStep;
 import engine.templates.viewHelper.steps.TranslateStep;
 import engine.templates.viewHelper.steps.WaitStep;
@@ -143,6 +144,24 @@ class ViewManipulator
 		{
 			_CurrentlyDoing = MotionStep.Create(CallStep.Create(DoThis), Self);
 		}
+		return Self;
+	}
+	
+	public function StepAlpha(ToThis:Float, FromThis:Float, OverThisMuchTime:Float = 1.0):ViewManipulator
+	{
+		if (_CurrentlyDoing != null)
+		{
+			_CurrentlyDoing.AddStep(MotionStep.Create(AlphaStep.Create(_Target, FromThis, ToThis, OverThisMuchTime), Self));
+		}
+		else
+		{
+			_CurrentlyDoing = MotionStep.Create(AlphaStep.Create(_Target, FromThis, ToThis, OverThisMuchTime), Self);
+		}
+		return Self;
+	}
+	
+	public function StepEaseTowards(Target:RueView, X:Float, Y:Float, OverThisMuchTime:Float):ViewManipulator
+	{
 		return Self;
 	}
 	
