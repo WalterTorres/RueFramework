@@ -52,10 +52,8 @@ class Profiler
 	
 	public static function AddTimer(Name:String):Int
 	{
-		
 		TimersCollection.push(new RueTimer(TheStage, TimersCollection.length, Name));
 		return TimersCollection.length - 1;
-		
 	}
 	
 	public function HideFPS():Void

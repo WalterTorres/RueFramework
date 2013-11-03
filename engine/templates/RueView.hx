@@ -8,6 +8,7 @@ import engine.helpers.RueMath;
 import engine.helpers.RueRectangle;
 import engine.helpers.TileDesc;
 import engine.systems.MouseInputSystem;
+import engine.systems.TileRenderSystem;
 import engine.templates.collections.RueCallback;
 import engine.templates.collections.RueCallbackList;
 import engine.templates.collections.ScreenGraphicList;
@@ -135,7 +136,6 @@ class RueView extends RueObject
 	public function Render(ParentX:Float, ParentY:Float):Void
 	{
 		if (_IsHidden) { return; }
-		
 		if (!_IsDragging)
 		{
 			if (_CurrentDragX != 0)
@@ -182,8 +182,8 @@ class RueView extends RueObject
 	{
 		if (_ClickRec != null)
 		{
-			_ClickRec.X = ParentX + _Position._X + _CurrentDragX + _RenderTarget.Target.x;
-			_ClickRec.Y = ParentY + _Position._Y + _CurrentDragY + _RenderTarget.Target.y;
+			_ClickRec.X = ParentX + _Position._X + _CurrentDragX;
+			_ClickRec.Y = ParentY + _Position._Y + _CurrentDragY;
 			if (_ClickRec.ContainsFPoint(ClickX, ClickY))
 			{
 				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X, ParentY + _Position._Y);
@@ -214,9 +214,15 @@ class RueView extends RueObject
 		return Self;
 	}
 	
-	public function AddGraphic(Desc:TileDesc, Layer:Int = 0 ):RueView
+	public function AddGraphic(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):RueView
 	{
-		_Graphics.Add(ScreenGraphic.Create(Desc, _RenderTarget, Layer));
+		_Graphics.Add(ScreenGraphic.Create(Desc, _RenderTarget, Layer, X, Y, Alpha));
+		return Self;
+	}
+	
+	public function AddGraphicDirect(Add:ScreenGraphic):RueView
+	{
+		_Graphics.Add(Add);
 		return Self;
 	}
 	

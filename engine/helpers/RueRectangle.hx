@@ -15,8 +15,8 @@ class RueRectangle
 	public var Width:Float;
 	public var Height:Float;
 	
-	public var HalfWidth:Float;
-	public var HalfHeight:Float;
+	//public var HalfWidth:Float;
+	//public var HalfHeight:Float;
 	
 	public var X:Float;
 	public var Y:Float;
@@ -48,8 +48,8 @@ class RueRectangle
 		Vessel.OffsetY = OffsetY;
 		Vessel.Width = Width;
 		Vessel.Height = Height;
-		Vessel.HalfWidth = Width *0.5;
-		Vessel.HalfHeight = Height * 0.5;
+		//Vessel.HalfWidth = Width *0.5;
+		//Vessel.HalfHeight = Height * 0.5;
 		return Vessel;
 	}
 

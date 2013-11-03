@@ -15,6 +15,7 @@ import engine.systems.UpdateSystem;
 import engine.templates.collections.RueCallbackList;
 import flash.display.StageScaleMode;
 import flash.system.System;
+import motion.Actuate;
 import nape.space.Space;
 import flash.display.Sprite;
 import flash.events.Event;
@@ -50,15 +51,17 @@ class World
 	public var LetterBoxOne:Sprite;
 	public var LetterBoxTwo:Sprite;
 	
-	private var TargetWidth:Float; 
-	private var TargetHeight:Float;
+	public var TargetWidth:Float; 
+	public var TargetHeight:Float;
+	
+	var DEntryPoint:EntityGroup->Void;
+	var LetterBoxesIn:Bool;
 
 	public function new(Stage:Main, Width:Float, Height:Float, EntryPoint:EntityGroup->Void) 
 	{
 		Stage.stage.scaleMode = StageScaleMode.NO_SCALE; //if this is not set by default just make sure it is, since we will be manipulating the scaling manually.
 		Lib.current.stage.addEventListener(Event.RESIZE, OnResize); //I added this for testing, since when targeting a windows or flash I can change the size of the screen dynamically, I see the changes working.
-		Stage.addEventListener(Event.ENTER_FRAME, Update); //for my own framework.
-		
+
 		Self = this;
 		Parent = Stage;
 		FrameRateDecimal = 1 / 60;
@@ -68,6 +71,7 @@ class World
 		LetterBoxTwo = new Sprite();
 		
 		Stage.addChild(MainSprite);//adding the display objects in this order we will make sure that the letter boxes will draw on top of our game. (in case there are letter boxes)
+		LetterBoxesIn = true;
 		Stage.addChild(LetterBoxOne);
 		Stage.addChild(LetterBoxTwo);
 		
@@ -105,7 +109,7 @@ class World
 		InputSystem.Init(Stage);
 		UpdateSystem.Init();
 		MouseInputSystem.Init(Stage);
-		TileRenderSystem.Init(Width, Height, ScreenRenderTarget, GuiRenderTarget, BackgroundRenderTarget);
+		TileRenderSystem.Init(Width, Height, ScreenRenderTarget, GuiRenderTarget, BackgroundRenderTarget, MainSprite);
 		SoundSystem.Init();
 		RebirthSystem.Init();
 		Profiler.Init(GuiRenderTarget);
@@ -114,7 +118,13 @@ class World
 		Group = EntityGroup.Create();
 		UpdateSystem.CurrentGroup = Group;
 		OnResize(null);
-		EntryPoint(Group);
+		DEntryPoint = EntryPoint;
+	}
+	
+	public function Start():Void
+	{
+		Parent.addEventListener(Event.ENTER_FRAME, Update); //for my own framework.
+		DEntryPoint(Group);
 	}
 	
 	public function Update(e:Event):Void
@@ -151,6 +161,15 @@ class World
 		Profiler.Report();
 	}
 	
+	public function DeactivateLetterBoxes():Void
+	{
+		if (LetterBoxesIn)
+		{
+			Parent.removeChild(LetterBoxOne);
+			Parent.removeChild(LetterBoxTwo);
+		}
+	}
+	
 	private function OnResize(e):Void //here is where we make sure that we are resizing and scaling the screen properly.
 	{
 		//fix the resolution
@@ -174,7 +193,7 @@ class World
 				//letter box goes to the sides, use the size of the screen for Height
 				//here, instead of just creating black boxes, you could potentially use your own graphics (in fact, youw ont be allowed to use black boxes for an apple app, so make sure to use your own graphics instead.
 				LetterBoxOne.graphics.beginFill(0x000000);
-				LetterBoxOne.graphics.drawRect(0, -1, OffsetX+1, Lib.current.stage.stageHeight/Smallest);
+				LetterBoxOne.graphics.drawRect(0, -1, OffsetX+1, Lib.current.stage.stageHeight/Smallest + 1);
 				LetterBoxOne.graphics.endFill();
 				
 				LetterBoxTwo.graphics.beginFill(0x000000);

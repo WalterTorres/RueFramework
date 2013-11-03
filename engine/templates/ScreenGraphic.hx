@@ -17,7 +17,8 @@ class ScreenGraphic extends RueObject
 	var Self:ScreenGraphic;
 	
 	public var _Graphic:GraphicsComponent;
-	public var _Layer:Int;
+	public var _X:Float;
+	public var _Y:Float;
 	
 	private function new() 
 	{
@@ -25,7 +26,7 @@ class ScreenGraphic extends RueObject
 		Self = this;
 	}
 	
-	public static function Create(GraphicID:TileDesc, Target:DrawStack, Layer:Int = 0):ScreenGraphic
+	public static function Create(GraphicID:TileDesc, Target:DrawStack, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):ScreenGraphic
 	{
 		var Vessel:ScreenGraphic;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -33,8 +34,9 @@ class ScreenGraphic extends RueObject
 		Vessel.InPool = false;
 		
 		Vessel._Graphic = GraphicsComponent.Create(GraphicID, Target, Layer);
-	
-		Vessel._Layer = Layer;
+		Vessel._Graphic.Alpha = Alpha;
+		Vessel._X = X;
+		Vessel._Y = Y;
 		
 		return Vessel;
 	}
@@ -43,11 +45,11 @@ class ScreenGraphic extends RueObject
 	{
 		if (CameraBound)
 		{
-			_Graphic.RenderToCamera(ParentX, ParentY);
+			_Graphic.RenderToCamera(ParentX + _X, ParentY + _Y);
 		}
 		else
 		{
-			_Graphic.RenderToScreen(ParentX, ParentY);
+			_Graphic.RenderToScreen(ParentX + _X, ParentY + _Y);
 		}
 	}
 	

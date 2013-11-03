@@ -54,14 +54,17 @@ class TileRenderSystem
 	public static var BackgroundRenderTarget:Sprite;
 	
 	public static var Zoom:Float = 1.0;
+	
+	public static var MainCanvas:Graphics;
 
-	public static function Init(StageWidth:Float, StageHeight:Float, ScreenRT:Sprite, GuiRT:Sprite, BackGRT:Sprite):Void
+	public static function Init(StageWidth:Float, StageHeight:Float, ScreenRT:Sprite, GuiRT:Sprite, BackGRT:Sprite, MainSprite:Sprite):Void
 	{
 		InitialHalfWidth = StageWidth * 0.5;
 		InitialHalfHeight = StageHeight * 0.5;
 		ScreenRenderTarget = ScreenRT;
 		BackgroundRenderTarget = BackGRT;
 		SetZoom(1.0);
+		MainCanvas = MainSprite.graphics;
 		TileSheetEntry.TheGraphics = ScreenRT.graphics;
 		TileSheetEntry.TheGuiGraphics = GuiRT.graphics;
 		TileSheetEntry.TheBGGraphics = BackGRT.graphics;
@@ -85,6 +88,10 @@ class TileRenderSystem
 	
 	public static function Render():Void
 	{
+		MainCanvas.clear();
+		MainCanvas.beginFill(0xFFFFFF);
+		MainCanvas.drawRect(0, 0, World.Self.TargetWidth, World.Self.TargetHeight);
+		MainCanvas.endFill();
 		TileSheetEntry.TheGraphics.clear();
 		TileSheetEntry.TheGuiGraphics.clear();
 		TileSheetEntry.TheBGGraphics.clear();

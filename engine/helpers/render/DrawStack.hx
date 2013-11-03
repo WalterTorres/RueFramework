@@ -1,11 +1,13 @@
 package engine.helpers.render;
 import engine.base.RueObject;
 import engine.helpers.collections.DrawNode;
+import engine.helpers.physicsHelpers.RectanglePool;
 import engine.helpers.TileSheetEntry;
 import engine.systems.TileRenderSystem;
 import engine.World;
 import flash.display.Graphics;
 import flash.display.Sprite;
+import flash.geom.Rectangle;
 import openfl.display.Tilesheet;
 
 /**
@@ -21,13 +23,15 @@ class DrawStack extends RueObject
 	var Next:DrawStack;
 	var Self:DrawStack;
 	
-	var TheSheet:TileSheetEntry;
+	private static var Flags:Int = Tilesheet.TILE_ROTATION | Tilesheet.TILE_ALPHA;
+	
+	public var TheSheet:TileSheetEntry;
 	public var Target:Sprite;
 	var Owner:Sprite;
 	
 	var _InnerLayers:Array<DrawNodeCountPair>;
 	
-	static var ElementNumber:Int = 4;
+	static var ElementNumber:Int = 5;
 	var TheLayer:Int;
 	
 	public var _RenderOnce:Bool;
@@ -43,6 +47,8 @@ class DrawStack extends RueObject
 	var _CurrentY:Float;
 	
 	var _PositionChanged:Bool;
+	
+	public var _FocusRect:Rectangle;
 	
 	private function new() 
 	{
@@ -71,7 +77,7 @@ class DrawStack extends RueObject
 		Vessel._RenderOnce = RenderOnce;
 		Vessel._AllowedToRender = true;
 		
-		Vessel._PositionChanged = false;
+		Vessel._PositionChanged = true;
 		
 		Vessel._CameraX = 0;
 		Vessel._CameraY = 0;
@@ -93,6 +99,26 @@ class DrawStack extends RueObject
 
 		Layers.Add(Vessel);//automatically adds itself to the rendering
 		return Vessel;
+	}
+	
+	public function SetFocusRect(X:Float, Y:Float, Width:Float, Height:Float):Void
+	{
+		if (_FocusRect == null)
+		{
+			_FocusRect = new Rectangle(0, 0, Width, Height);
+		}
+		else
+		{
+			_FocusRect.x = Std.int(X);
+			_FocusRect.y = Std.int(Y);
+			_FocusRect.width = Width;
+			_FocusRect.height = Height;
+		}
+		
+		_PositionChanged = true;
+		Target.scrollRect = _FocusRect;
+		Target.x = _CurrentX - _CameraX + _FocusRect.x;
+		Target.y = _CurrentY - _CameraY + _FocusRect.y;
 	}
 	
 	public function SetCameraPullXY(X:Float, Y:Float):Void
@@ -145,6 +171,7 @@ class DrawStack extends RueObject
 	override public function Recycle():Void
 	{
 		Target = null;
+		_FocusRect = null;
 		
 		for (i in 0..._InnerLayers.length)
 		{
@@ -159,11 +186,11 @@ class DrawStack extends RueObject
 		super.Recycle();
 	}
 	
-	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float):Void
+	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float, Alpha:Float):Void
 	{
 		var LayerToAdd:DrawNodeCountPair = _InnerLayers[Layer];
 		var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
-		var NewNode:DrawNode = DrawNode.Create(X - Offset.ValueOne, Y - Offset.ValueTwo, UniqueID, Rotation);
+		var NewNode:DrawNode = DrawNode.Create(X - Offset.ValueOne, Y - Offset.ValueTwo, UniqueID, Rotation, Alpha);
 		LayerToAdd.Add(NewNode);
 	}
 	
@@ -172,15 +199,21 @@ class DrawStack extends RueObject
 		if (_PositionChanged)
 		{
 			_PositionChanged = false;
-			Target.x = _CurrentX - _CameraX;
-			Target.y = _CurrentY - _CameraY;
+			if (_FocusRect != null)
+			{
+				Target.x = _CurrentX - _CameraX + _FocusRect.x;
+				Target.y = _CurrentY - _CameraY + _FocusRect.y;
+			}
+			else
+			{
+				Target.x = _CurrentX - _CameraX;
+				Target.y = _CurrentY - _CameraY;
+			}
 		}
 		
 		if (!_AllowedToRender) { return; }
 		Target.graphics.clear();
-		
-		
-		
+
 		var CurrentCount:Int = 0;
 		var TileStack:Array<Float> = new Array<Float>();
 		for (i in 0..._InnerLayers.length)
@@ -191,6 +224,7 @@ class DrawStack extends RueObject
 			var StackHead:DrawNode = Current._DrawHeadNode;
 			while (StackHead != null)
 			{
+				TileStack[--CountDown] = StackHead.Alpha;
 				TileStack[--CountDown] = -StackHead.Rotation;
 				TileStack[--CountDown] = StackHead.Frame;
 				TileStack[--CountDown] = StackHead.PositionY;
@@ -201,7 +235,7 @@ class DrawStack extends RueObject
 			Current.Flush();
 		}
 		
-		TheSheet.TheSheet.drawTiles(Target.graphics, TileStack, true, Tilesheet.TILE_ROTATION);
+		TheSheet.TheSheet.drawTiles(Target.graphics, TileStack, true, Flags);
 		if (_RenderOnce)
 		{
 			_AllowedToRender = false;

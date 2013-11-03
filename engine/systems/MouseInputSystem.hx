@@ -64,6 +64,8 @@ class MouseInputSystem
 	
 	private static var GestureAgent:RoxGestureAgent = null;
 	
+	private static var theStage:Main;
+	
 	public static function Init(TheStage:Main):Void
 	{
 		if (Accelerometer.isSupported)
@@ -74,18 +76,6 @@ class MouseInputSystem
 		{
 			Accelerometersupported = false;
 		}
-
-		DebugText = new TextField();
-		DebugText.x = 100;
-		DebugText.y = 300;
-		DebugText.width = 300;
-		DebugText.height = 300;
-		DebugText.scaleX = 3;
-		DebugText.scaleY = 3;
-		DebugText.mouseEnabled = false;
-		DebugText.selectable = false;
-
-		TheStage.stage.addChild(DebugText);
 		
 		#if !flash
 		GestureAgent = new RoxGestureAgent(TheStage.stage, RoxGestureAgent.GESTURE);
@@ -94,13 +84,43 @@ class MouseInputSystem
 		
 		TheStage.stage.addEventListener(MouseEvent.MOUSE_DOWN, OnTouchDown, true, 0);
 		TheStage.stage.addEventListener(MouseEvent.MOUSE_UP, OnTouchUp);
-
 		TheStage.stage.addEventListener(MouseEvent.MOUSE_MOVE, OnDrag);
 		
 		//#end
 		
 		ClickedLastTick = false;
 		ClickedThisTick = false;
+		
+		theStage = TheStage;
+	}
+	
+	private static var isIn:Bool = false;
+	public static function ToggleDebug():Void
+	{
+		if (DebugText == null)
+		{
+			DebugText = new TextField();
+			DebugText.x = 300;
+			DebugText.y = 300;
+			DebugText.width = 300;
+			DebugText.height = 300;
+			DebugText.scaleX = 3;
+			DebugText.scaleY = 3;
+			DebugText.mouseEnabled = false;
+			DebugText.selectable = false;
+		}
+		
+		if (isIn)
+		{
+			isIn = false;
+			theStage.stage.removeChild(DebugText);
+		}
+		else
+		{
+			isIn = true;
+			theStage.stage.addChild(DebugText);
+		}
+		
 	}
 	
 	
@@ -120,8 +140,8 @@ class MouseInputSystem
 	{
 		//this will be true for all the instances
 		ClickedThisTick = true;
-		X = A.stageX*XRate + LetterBoxOffsetX;
-		Y = A.stageY*YRate + LetterBoxOffsetY;
+		X = A.stageX*XRate - LetterBoxOffsetX;
+		Y = A.stageY*YRate - LetterBoxOffsetY;
 		
 		var ZoomedMousePositionX:Float = (X - TileRenderSystem.InitialHalfWidth) / TileRenderSystem.Zoom;
 		var ZoomedMousePositionY:Float = (Y - TileRenderSystem.InitialHalfHeight) / TileRenderSystem.Zoom;
@@ -137,10 +157,13 @@ class MouseInputSystem
 			TouchOne._InitialY = Y;
 		}
 
-		//var comp = "X: " + CameraMouseX + " Y: " + CameraMouseY;
-		//var Trace = "Clicked X: " + CameraMouseX + " Y: " + CameraMouseY;
-		//trace(Trace);
-		//DebugText.text = comp;
+		if (isIn)
+		{
+			var comp = "X: " + Std.int(X) + " Y: " + Std.int(Y);
+		
+			DebugText.text = comp;
+		}
+		
 		IntX = cast(X);
 		IntY = cast(Y);
 		IntCameraX = cast(CameraMouseX);
@@ -160,8 +183,8 @@ class MouseInputSystem
 	
 	private static function OnTouchUp(A:MouseEvent):Void
 	{
-		X = A.stageX*XRate + LetterBoxOffsetX;
-		Y = A.stageY*YRate + LetterBoxOffsetY;
+		X = A.stageX*XRate - LetterBoxOffsetX;
+		Y = A.stageY*YRate - LetterBoxOffsetY;
 		
 		ClickedThisTick = false;
 		if (!Dragging)
@@ -203,8 +226,15 @@ class MouseInputSystem
 				Dragging = true;
 			}
 		}
-		X = A.stageX*XRate + LetterBoxOffsetX;
-		Y = A.stageY * YRate + LetterBoxOffsetY;
+		X = A.stageX*XRate - LetterBoxOffsetX;
+		Y = A.stageY * YRate - LetterBoxOffsetY;
+		
+		if (isIn)
+		{
+			var comp = "X: " + Std.int(X) + " Y: " + Std.int(Y);
+		
+			DebugText.text = comp;
+		}
 		
 		var ZoomedMousePositionX:Float = (X - TileRenderSystem.InitialHalfWidth) / TileRenderSystem.Zoom;
 		var ZoomedMousePositionY:Float = (Y - TileRenderSystem.InitialHalfHeight) / TileRenderSystem.Zoom;

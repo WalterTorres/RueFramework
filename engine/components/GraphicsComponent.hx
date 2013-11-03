@@ -35,6 +35,7 @@ class GraphicsComponent
 	
 	public var TargetCanvas:DrawStack;
 	public var Layer:Int;
+	public var Alpha:Float;
 	
 	private function new() 
 	{
@@ -51,6 +52,7 @@ class GraphicsComponent
 		Vessel.CurrentFrame = 0;
 		Vessel.ElapsedTime = 0;
 		Vessel.Rotation = 0;
+		Vessel.Alpha = 1.0;
 		Vessel.CurrentDelay = Vessel.Description.DS[0];
 		Vessel.MaxFrame = Vessel.Description.FrameCount;
 		Vessel.CameraRatioX = CamXRatio;
@@ -118,13 +120,13 @@ class GraphicsComponent
 	public function RenderToScreen(X:Float, Y:Float):Void
 	{
 		var ID:Int = Description.UIDS[CurrentFrame];
-		TargetCanvas.AddToRender(Layer, ID, X, Y, Rotation);
+		TargetCanvas.AddToRender(Layer, ID, X, Y, Rotation, Alpha);
 	}
 	
 	public function RenderToCamera(X:Float, Y:Float):Void
 	{
 		var ID:Int = Description.UIDS[CurrentFrame];
-		TargetCanvas.AddToRender(Layer, ID, X + TileRenderSystem.CameraX*CameraRatioX, Y + TileRenderSystem.CameraY*CameraRatioY, Rotation);
+		TargetCanvas.AddToRender(Layer, ID, X + TileRenderSystem.CameraX*CameraRatioX, Y + TileRenderSystem.CameraY*CameraRatioY, Rotation, Alpha);
 	}
 	
 	public function Recycle():Void

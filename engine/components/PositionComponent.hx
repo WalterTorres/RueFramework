@@ -28,8 +28,6 @@ class PositionComponent extends RueObject
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new PositionComponent(); }
 		Vessel.InPool = false;
-
-	
 		Vessel.Adjust(X, Y);
 		
 		return Vessel;

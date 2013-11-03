@@ -1,6 +1,19 @@
 package engine.templates;
+import engine.base.RueObject;
 import engine.components.PositionComponent;
+import engine.helpers.Profiler;
 import engine.helpers.render.DrawStack;
+import engine.helpers.RueMath;
+import engine.helpers.RueRectangle;
+import engine.helpers.TileDesc;
+import engine.helpers.TileSheetEntry;
+import engine.systems.MouseInputSystem;
+import engine.templates.collections.RueCallback;
+import engine.templates.collections.RueCallbackList;
+import engine.templates.collections.ScreenGraphicList;
+import engine.templates.collections.ViewElements;
+import engine.templates.RueView;
+import flash.display.Sprite;
 
 /**
  * ...
@@ -12,32 +25,155 @@ class RueScrollView extends RueView
 	var RueScrollSelf:RueScrollView;
 	var RueScrollNext:RueScrollView;
 	
-	var _ScrollViewRenderTarget:DrawStack;
+	public var _OffsetX:Float;
+	public var _OffsetY:Float;
+	
+	public var _MaxX:Float;
+	public var _MaxY:Float;
+	
+	public var _MinX:Float;
+	public var _MinY:Float;
+	
+	var _Width:Float;
+	var _Height:Float;
 	
 	private function new() 
 	{
 		super();
 		RueScrollSelf = this;
 	}
-	
-	/**
-	 * Scroll views control their own render target, which is fixed to be of a certain dimensions and all the graphics that belong to this view will not be visible outside the bounds of the view.
-	 * 
-	 * @param	RenderTarget 	The parent render target where this view will be placed.
-	 * @param	Position		X and Y of the view.	
-	 * @param	Width			How big the render target viewport is in width.
-	 * @param	Height			How big the render target viewport is in height.
-	 * @return
-	 */
-	public static function Create(RenderTarget:DrawStack, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueScrollView
+
+	public static function Create(Spritesheet:TileSheetEntry, Target:Sprite, LayerCount:Int = 2, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0, MinX:Float = 0, MinY:Float = 0, MaxX:Float = 0, MaxY:Float = 0):RueScrollView
 	{
 		var Vessel:RueScrollView;
 		if (RueScrollHead != null) { Vessel = RueScrollHead; RueScrollHead = RueScrollHead.RueScrollNext; }
 		else { Vessel = new RueScrollView(); }
 		Vessel.InPool = false;
+		Vessel._RenderTarget = DrawStack.Create(Spritesheet, Target, LayerCount);
+		Vessel._RenderTarget.SetFocusRect(Position._X, Position._Y, Width, Height);
+		Vessel._Position = Position;
+		
+		if (Width != 0 && Height != 0)
+		{
+			Vessel._ClickRec = RueRectangle.Create(Position._X, Position._Y, Width, Height);
+		}
+		
+		Vessel._MaxX = MaxX;
+		Vessel._MaxY = MaxY;
+		Vessel._MinX = MinX;
+		Vessel._MinY = MinY;
+		Vessel._OffsetX = 0;
+		Vessel._OffsetY = 0;
+		Vessel._ParentView = null;
+		Vessel._IsHidden = false;
+		Vessel._DrawChildren = ViewElements.Create();
+		Vessel._Graphics = ScreenGraphicList.Create();
+		Vessel._OnClick = RueCallbackList.Create();
+		Vessel._OnDraw = RueCallbackList.Create();
+		Vessel._OnRecycle = RueCallbackList.Create();
+		Vessel._IsScrollable = true;
+		Vessel._MaxDragX = 0;
+		Vessel._MaxDragY = 0;
+		Vessel._Width = Width;
+		Vessel._Height = Height;
+		Vessel._CurrentDragX = 0;
+		Vessel._CurrentDragY = 0;
+		Vessel._IsDragging = false;
+		Vessel._ElasticSpeedX = 5.5;
+		Vessel._ElasticSpeedY = 5.5;
+		Vessel._Rotation = 0;
+		Vessel._CameraBound = false;
 		
 		return Vessel;
 	}
+	
+	override public function Dragging():Void 
+	{
+		if (!_IsDragging) { return; }
+		
+		var DeltaX:Float = MouseInputSystem.X - _LastDragX;
+		var DeltaY:Float = MouseInputSystem.Y - _LastDragY;
+		
+		_CurrentDragX += DeltaX;
+		_CurrentDragY += DeltaY;
+		
+		if (_CurrentDragX < _MinX)
+		{
+			_CurrentDragX = _MinX;
+		}
+		else if (_CurrentDragX > _MaxX)
+		{
+			_CurrentDragX = _MaxX;
+		}
+		
+		if (_CurrentDragY < _MinY)
+		{
+			_CurrentDragY = _MinY;
+		}
+		else if (_CurrentDragY > _MaxY)
+		{
+			_CurrentDragY = _MaxY;
+		}
+		
+		_LastDragX = MouseInputSystem.X;
+		_LastDragY = MouseInputSystem.Y;
+	}
+	
+	override public function Render(ParentX:Float, ParentY:Float):Void 
+	{
+		if (_IsHidden) { return; }
+		_OnDraw.TriggerAll();
+		_RenderTarget.SetFocusRect(_Position._X, _Position._Y, _Width, _Height);
+		var X:Float = ParentX + _CurrentDragX + _Position._X;
+		var Y:Float = ParentY + _CurrentDragY + _Position._Y;
+		_Graphics.DrawAll(X , Y, _Rotation, _CameraBound);
+		_DrawChildren.Render(X, Y);
+	}
+	
+	public function SetWidthHeight(NewWidth:Float):Void
+	{
+		_Width = NewWidth;
+		_ClickRec.Width = _Width;
+		_RenderTarget.SetFocusRect(_Position._X, _Position._Y, _Width, _Height);
+	}
+	
+	public function SetHeight(NewHeight:Float):Void
+	{
+		_Height = NewHeight;
+		_ClickRec.Height = _Height;
+		_RenderTarget.SetFocusRect(_Position._X, _Position._Y, _Width, _Height);
+	}
+	
+	override public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView 
+	{
+		if (_ClickRec != null)
+		{
+			_ClickRec.X = ParentX + _Position._X;
+			_ClickRec.Y = ParentY + _Position._Y;
+			if (_ClickRec.ContainsFPoint(ClickX, ClickY))
+			{
+				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X, ParentY + _Position._Y);
+				if ( Attempt == null) //if no children are being clicked then this one is being clicked
+				{
+					return Self;
+				}
+				else
+				{
+					return Attempt;
+				}
+			}
+		}
+		return null;
+	}
+	
+	
+	override public function AddGraphic(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Hook:ScreenGraphic = null):RueView
+	{
+		Hook = ScreenGraphic.Create(Desc, _RenderTarget, Layer, X, Y, Alpha);
+		_Graphics.Add(Hook);
+		return Self;
+	}
+	
 
 	override public function Recycle():Void 
 	{
