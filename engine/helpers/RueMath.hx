@@ -104,6 +104,13 @@ class RueMath
 		return Start + ((End-Start) * (3*Square(Interval)-2*Cube(Interval)));
 	}
 	
+	public static inline function Lerp3Inverted(Start:Float, End:Float, Interval:Float):Float
+	{
+		if (Interval > 1.0) { Interval = 1.0; }
+		else if (Interval < 0.0) { Interval = 0.0; }
+		return Start + ((End-Start) * ((3*Square(Interval)-2*Cube(Interval)))/Interval );
+	}
+	
 	public static inline function BezierInterpolation(InitialX:Float, InitialY:Float, MidX:Float, MidY:Float, FinalX:Float, FinalY:Float, Target:PhysicsComponent, Completion:Float):Bool
 	{
 		var CompletetionDone:Bool = false;

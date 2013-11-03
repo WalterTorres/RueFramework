@@ -5,6 +5,7 @@ import engine.gameElements.interfaces.IMotionStep;
 import engine.helpers.Profiler;
 import engine.helpers.RueMath;
 import engine.templates.RueView;
+import engine.templates.viewHelper.steps.enums.Ease;
 
 /**
  * ...
@@ -25,6 +26,7 @@ class EasePositionStep
 	var _ToY:Float;
 	var _OverThisMuchTime:Float;
 	var _Elapsed:Float;
+	var _Ease:Ease;
 	
 	private function new() 
 	{
@@ -32,7 +34,7 @@ class EasePositionStep
 		Self = this;
 	}
 	
-	public static function Create(Target:RueView, FromX:Float, FromY:Float, ToX:Float, ToY:Float, OverThisMuchTime:Float):EasePositionStep
+	public static function Create(Target:RueView, FromX:Float, FromY:Float, ToX:Float, ToY:Float, OverThisMuchTime:Float, EaseType:Ease):EasePositionStep
 	{
 		var Vessel:EasePositionStep;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -45,6 +47,7 @@ class EasePositionStep
 		Vessel._ToX = ToX;
 		Vessel._ToY = ToY;
 		Vessel._OverThisMuchTime = OverThisMuchTime;
+		Vessel._Ease = EaseType;
 		Vessel._Elapsed = 0.0;
 		
 		return Vessel;
@@ -52,10 +55,31 @@ class EasePositionStep
 	
 	public function Step():Bool 
 	{
-		_Elapsed += Profiler.ElapsedTime / _OverThisMuchTime;
 		
-		var CurrentX:Float = RueMath.Lerp3(_FromX, _ToX, _Elapsed);
-		var CurrentY:Float = RueMath.Lerp3(_FromY, _ToY, _Elapsed);
+		_Elapsed += Profiler.ElapsedTime / _OverThisMuchTime;
+		var CurrentX:Float = 0;
+		var CurrentY:Float = 0;
+		switch(_Ease)
+		{
+			case EASE_IN:
+			{
+				CurrentX = RueMath.Lerp3(_FromX, _ToX, _Elapsed);
+				CurrentY = RueMath.Lerp3(_FromY, _ToY, _Elapsed);
+			}
+			
+			case BOUNCE_IN:
+			{
+				CurrentX = RueMath.Lerp3Inverted(_FromX, _ToX, _Elapsed);
+				CurrentY = RueMath.Lerp3Inverted(_FromY, _ToY, _Elapsed);
+			}
+			
+			default:
+			{
+				CurrentX = RueMath.Lerp(_FromX, _ToX, _Elapsed);
+				CurrentY = RueMath.Lerp(_FromY, _ToY, _Elapsed);
+			}
+			
+		}
 		
 		_Target._Position._X = CurrentX;
 		_Target._Position._Y = CurrentY;
@@ -64,7 +88,6 @@ class EasePositionStep
 		{
 			return true;
 		}
-		
 		return false;
 	}
 	

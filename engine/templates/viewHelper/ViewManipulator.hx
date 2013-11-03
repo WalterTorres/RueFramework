@@ -13,6 +13,7 @@ import engine.templates.RueView;
 import engine.templates.viewHelper.steps.AlphaStep;
 import engine.templates.viewHelper.steps.CallStep;
 import engine.templates.viewHelper.steps.EasePositionStep;
+import engine.templates.viewHelper.steps.enums.Ease;
 import engine.templates.viewHelper.steps.TranslateStep;
 import engine.templates.viewHelper.steps.WaitStep;
 import engine.World;
@@ -161,15 +162,15 @@ class ViewManipulator
 		return Self;
 	}
 	
-	public function StepEaseTowards(Target:RueView, X:Float, Y:Float, OverThisMuchTime:Float):ViewManipulator
+	public function StepEaseTowards(Target:RueView, X:Float, Y:Float, OverThisMuchTime:Float, EaseOption:Ease):ViewManipulator
 	{
 		if (_CurrentlyDoing != null)
 		{
-			_CurrentlyDoing.AddStep(MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime), Self));
+			_CurrentlyDoing.AddStep(MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self));
 		}
 		else
 		{
-			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime), Self);
+			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self);
 		}
 		return Self;
 	}
