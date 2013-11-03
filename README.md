@@ -18,6 +18,7 @@ class Main extends Sprite
 	{
 		super();	
 		TheWorld = new World(this, 300, 768, EntryPoint);
+		TheWorld.start(); //this hooks up the world game loop and calls your entry point with the main entity group.
 	}
 	
 	private function EntryPoint(Group:EntityGroup):Void
