@@ -12,6 +12,7 @@ import engine.templates.collections.RueCallbackList;
 import engine.templates.RueView;
 import engine.templates.viewHelper.steps.AlphaStep;
 import engine.templates.viewHelper.steps.CallStep;
+import engine.templates.viewHelper.steps.EasePositionStep;
 import engine.templates.viewHelper.steps.TranslateStep;
 import engine.templates.viewHelper.steps.WaitStep;
 import engine.World;
@@ -162,6 +163,14 @@ class ViewManipulator
 	
 	public function StepEaseTowards(Target:RueView, X:Float, Y:Float, OverThisMuchTime:Float):ViewManipulator
 	{
+		if (_CurrentlyDoing != null)
+		{
+			_CurrentlyDoing.AddStep(MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime), Self));
+		}
+		else
+		{
+			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime), Self);
+		}
 		return Self;
 	}
 	
