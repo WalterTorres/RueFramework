@@ -17,20 +17,20 @@ $(CBI)*/
 
 class $(FileName) $(CSLB) extends Entity
 {
-	static var Head:$(FileName);
-	var Next:$(FileName);
-	var Self:$(FileName);
+	static var $(FileName)Head:$(FileName);
+	var $(FileName)Next:$(FileName);
+	var $(FileName)Self:$(FileName);
 	
 	private function new() 
 	{
 		super();
-		Self = this;
+		$(FileName)Self = this;
 	}
 	
 	public static function Create(Group:EntityGroup):$(FileName)
 	{
 		var Vessel:$(FileName);
-		if(Head != null) { Vessel = Head; Head = Head.Next; }
+		if($(FileName)Head != null) { Vessel = $(FileName)Head; $(FileName)Head = $(FileName)Head.$(FileName)Next; }
 		else { Vessel = new $(FileName)(); }
 		Vessel.Setup(Group);
 		
@@ -63,8 +63,8 @@ class $(FileName) $(CSLB) extends Entity
 	
 	override public function OnRebirth():Void
 	{
-		Next = Head;
-		Head = Self;
+		$(FileName)Next = $(FileName)Head;
+		$(FileName)Head = $(FileName)Self;
 	}
 		
 	

@@ -122,12 +122,10 @@ class RueView extends RueObject
 		if (RueMath.Abs(_CurrentDragX) > _MaxDragX)
 		{
 			_CurrentDragX = RueMath.AbsoluteDirection(_CurrentDragX) * _MaxDragX;
-			//_IsDragging = false;
 		}
 		if (RueMath.Abs(_CurrentDragY) > _MaxDragY)
 		{
 			_CurrentDragY = RueMath.AbsoluteDirection(_CurrentDragY) * _MaxDragY;
-			//_IsDragging = false;
 		}
 		
 		_LastDragX = MouseInputSystem.X;

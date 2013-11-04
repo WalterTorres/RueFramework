@@ -10,7 +10,7 @@ import engine.helpers.TileDesc;
  * @author Jakegr
  */
 
-class ScreenGraphic extends RueObject
+class ScreenGraphic extends RueObject implements IScreenGraphic
 {
 	static var Head:ScreenGraphic;
 	var Next:ScreenGraphic;
@@ -41,7 +41,7 @@ class ScreenGraphic extends RueObject
 		return Vessel;
 	}
 
-	public function Draw(ParentX:Float, ParentY:Float, CameraBound:Bool):Void
+	public function DrawFrom(ParentX:Float, ParentY:Float, CameraBound:Bool):Void
 	{
 		if (CameraBound)
 		{
@@ -57,6 +57,12 @@ class ScreenGraphic extends RueObject
 	{
 		_Graphic.Rotation = Rot;
 	}
+	
+	public function SetAlpha(Alpha:Float):Void
+	{
+		_Graphic.Alpha = Alpha;
+	}
+	
 	
 	public override function Recycle():Void
 	{

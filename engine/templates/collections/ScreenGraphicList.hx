@@ -1,5 +1,6 @@
 package engine.templates.collections;
 import engine.base.RueObject;
+import engine.templates.IScreenGraphic;
 import engine.templates.ScreenGraphic;
 
 /**
@@ -37,7 +38,7 @@ class ScreenGraphicList
 		return Vessel;
 	}
 	
-	public function Add(Element:ScreenGraphic):RueNodeConnection //CHANGE ME TO THE PROPER ELEMENT TO ADD
+	public function Add(Element:IScreenGraphic):RueNodeConnection //CHANGE ME TO THE PROPER ELEMENT TO ADD
 	{
 		var Addition:ScreenGraphicListNode = ScreenGraphicListNode.Create(Element, Self);
 		var Connection:RueNodeConnection = Element.ConnectToNode(Addition); //this will return a handle to the link itself, this can be cached and told to recycle to remove itself from the list it resides in both sides.
@@ -58,8 +59,8 @@ class ScreenGraphicList
 		var Current:ScreenGraphicListNode = _HeadNode;
 		while (Current != null)
 		{
-			Current._Target._Graphic.Rotation = Rotation;
-			Current._Target.Draw(ParentX, ParentY, CameraBound);
+			Current._Target.SetRotation(Rotation);
+			Current._Target.DrawFrom(ParentX, ParentY, CameraBound);
 			Current = Current._NextNode;
 		}
 	}
@@ -69,7 +70,7 @@ class ScreenGraphicList
 		var Current:ScreenGraphicListNode = _HeadNode;
 		while (Current != null)
 		{
-			Current._Target._Graphic.Alpha = Alpha;
+			Current._Target.SetAlpha(Alpha);
 			Current = Current._NextNode;
 		}
 	}
@@ -101,7 +102,7 @@ class ScreenGraphicListNode implements RueNodeConnection
 	var Self:ScreenGraphicListNode;
 	
 	public var _Owner:ScreenGraphicList;
-	public var _Target:ScreenGraphic; //CHANGE ME TO THE PROPER ELEMENT TO HOLD
+	public var _Target:IScreenGraphic; //CHANGE ME TO THE PROPER ELEMENT TO HOLD
 	public var _TargetNode:RueNodeConnection;
 	
 	public var _NextNode:ScreenGraphicListNode;
@@ -109,7 +110,7 @@ class ScreenGraphicListNode implements RueNodeConnection
 	
 	private function new() { Self = this; }
 	
-	public static function Create(Target:ScreenGraphic, Owner:ScreenGraphicList):ScreenGraphicListNode //CHANGE ME TO THE PROPER ELEMENT TO HOLD
+	public static function Create(Target:IScreenGraphic, Owner:ScreenGraphicList):ScreenGraphicListNode //CHANGE ME TO THE PROPER ELEMENT TO HOLD
 	{
 		var Vessel:ScreenGraphicListNode;
 		if(Head != null)

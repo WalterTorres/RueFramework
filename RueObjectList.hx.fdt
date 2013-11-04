@@ -8,24 +8,24 @@ $(CBI)*/
 
 class $(FileName) $(CSLB)
 {
-	static var Head:$(FileName);
-	var Next:$(FileName);
-	var Self:$(FileName);
+	static var $(FileName)Head:$(FileName);
+	var $(FileName)Next:$(FileName);
+	var $(FileName)Self:$(FileName);
 	
 	public var _HeadNode:$(FileName)Node;
 	
 	private function new() $(CSLB) 
 	{
-		Self = this;
+		$(FileName)Self = this;
 	}
 	
 	public static function Create():$(FileName)
 	{
 		var Vessel:$(FileName);
-		if(Head != null)
+		if($(FileName)Head != null)
 		{
-			Vessel = Head;
-			Head = Head.Next;
+			Vessel = $(FileName)Head;
+			$(FileName)Head = $(FileName)Head.$(FileName)Next;
 		}
 		else 
 		{
@@ -53,8 +53,8 @@ class $(FileName) $(CSLB)
 	
 	public function Recycle():Void
 	{
-		Next = Head;
-		Head = Self;
+		$(FileName)Next = $(FileName)Head;
+		$(FileName)Head = Self;
 		while (_HeadNode != null)
 		{
 			_HeadNode.Remove();
@@ -64,9 +64,9 @@ class $(FileName) $(CSLB)
 
 class $(FileName)Node implements RueNodeConnection
 {
-	static var Head:$(FileName)Node;
-	var Next:$(FileName)Node;
-	var Self:$(FileName)Node;
+	static var $(FileName)NodeHead:$(FileName)Node;
+	var $(FileName)NodeNext:$(FileName)Node;
+	var $(FileName)NodeSelf:$(FileName)Node;
 	
 	public var _Owner:$(FileName);
 	public var _Target:RueObject; //CHANGE ME TO THE PROPER ELEMENT TO HOLD
@@ -80,10 +80,10 @@ class $(FileName)Node implements RueNodeConnection
 	public static function Create(Target:RueObject, Owner:$(FileName)):$(FileName)Node //CHANGE ME TO THE PROPER ELEMENT TO HOLD
 	{
 		var Vessel:$(FileName)Node;
-		if(Head != null)
+		if($(FileName)NodeHead != null)
 		{
-			Vessel = Head;
-			Head = Head.Next;
+			Vessel = $(FileName)NodeHead;
+			$(FileName)NodeHead = $(FileName)NodeHead.$(FileName)NodeNext;
 		}
 		else 
 		{
@@ -143,8 +143,8 @@ class $(FileName)Node implements RueNodeConnection
 			}
 		}
 		
-		Next = Head;
-		Head = Self;
+		$(FileName)NodeNext = $(FileName)NodeHead;
+		$(FileName)NodeHead = $(FileName)NodeSelf;
 	}
 }
 

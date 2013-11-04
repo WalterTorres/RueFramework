@@ -7,20 +7,20 @@ $(CBI)* @author $(DefaultUser)
 $(CBI)*/
 
 class $(FileName) extends RueObject$(CSLB){
-	static var Head:$(FileName);
-	var Next:$(FileName);
-	var Self:$(FileName);
+	static var $(FileName)Head:$(FileName);
+	var $(FileName)Next:$(FileName);
+	var $(FileName)Self:$(FileName);
 	
 	private function new() $(CSLB){
 		$(EntryPoint)
 		super();
-		Self = this;
+		$(FileName)Self = this;
 	}
 	
 	public static function Create():$(FileName)
 	{
 		var Vessel:$(FileName);
-		if(Head != null) { Vessel = Head; Head = Head.Next; }
+		if($(FileName)Head != null) { Vessel = $(FileName)Head; $(FileName)Head = $(FileName)Head.$(FileName)Next; }
 		else { Vessel = new $(FileName)(); }
 		Vessel.InPool = false;
 		
@@ -37,8 +37,8 @@ class $(FileName) extends RueObject$(CSLB){
 	
 	override public function OnRebirth():Void
 	{
-		Next = Head;
-		Head = Self;
+		$(FileName)Next = $(FileName)Head;
+		$(FileName)Head = $(FileName)Self;
 	}
 		
 	
