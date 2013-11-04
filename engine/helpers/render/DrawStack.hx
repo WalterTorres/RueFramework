@@ -214,7 +214,7 @@ class DrawStack extends RueObject
 	
 	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float, Alpha:Float):Void
 	{
-		while (Layer > _InnerLayerCount)
+		while (Layer >= _InnerLayerCount)
 		{
 			_InnerLayerCount++;
 			_InnerLayers.push(DrawNodeCountPair.Create());

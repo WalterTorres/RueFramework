@@ -1,4 +1,5 @@
 package engine.templates;
+import engine.base.Entity;
 import engine.base.RueObject;
 import engine.helpers.render.DrawStack;
 import flash.display.Sprite;
@@ -23,6 +24,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 	var _X:Float;
 	var _Y:Float;
 	var _Size:Int;
+	var _Color:UInt;
 	
 	private function new() 
 	{
@@ -30,7 +32,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 		RueTextFieldSelf = this;
 	}
 	
-	public static function Create(X:Float, Y:Float, Size:Int, TheFont:Font, Editable:Bool = false, Selectable:Bool = false):RueTextField
+	public static function Create(X:Float, Y:Float, Size:Int, TheFont:Font, Editable:Bool = false, Selectable:Bool = false, color:UInt = 0x5a1516):RueTextField
 	{
 		var Vessel:RueTextField;
 		if(RueTextFieldHead != null) { Vessel = RueTextFieldHead; RueTextFieldHead = RueTextFieldHead.RueTextFieldNext; }
@@ -39,25 +41,26 @@ class RueTextField extends RueObject implements IScreenGraphic
 		
 		Vessel._Font = TheFont;
 
-		Vessel._Text = new TextField();
-		Vessel._Text.selectable = Selectable;
-		Vessel._Text.mouseEnabled = Editable;
 		Vessel._X = X;
 		Vessel._Y = Y;
 		Vessel._Size = Size;
-		Vessel._Text.embedFonts = true;
-
-		var TheTextFormat:TextFormat = new TextFormat(TheFont.fontName, Size);
-		Vessel._Text.defaultTextFormat = TheTextFormat;
-		Vessel._Text.setTextFormat(TheTextFormat);
+		Vessel._Color = color;
+		Vessel.ChangeTextTo("Description");
 
 		return Vessel;
 	}
 	
 	public function ChangeTextTo(ToThis:String):Void
 	{
-		var X:Float = _Text.x;
-		var Y:Float = _Text.y;
+		var X:Float = 0;
+		var Y:Float = 0;
+		
+		if (_Text != null)
+		{
+			X = _Text.x;
+			Y = _Text.y;	
+		}
+		
 		
 		if (_Parent != null)
 		{
@@ -69,9 +72,9 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Text.selectable = false;
 		_Text.embedFonts = true;
 		_Text.width = ToThis.length * (_Size+1);
-		_Text.height = (_Size + 1);
+		_Text.height = (_Size*1.5);
 		_Text.text = ToThis;
-		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size);
+		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size, _Color );
 		_Text.setTextFormat(_TextForm);
 		if (_Parent != null)
 		{

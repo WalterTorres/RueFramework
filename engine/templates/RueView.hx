@@ -216,7 +216,7 @@ class RueView extends RueObject
 		return Self;
 	}
 	
-	public function AddGraphicDirect(Add:ScreenGraphic):RueView
+	public function AddGraphicDirect(Add:IScreenGraphic):RueView
 	{
 		_Graphics.Add(Add);
 		return Self;

@@ -83,6 +83,7 @@ class RueScrollView extends RueView
 		Vessel._ElasticSpeedY = 5.5;
 		Vessel._Rotation = 0;
 		Vessel._CameraBound = false;
+		Vessel._RenderTarget = DrawStack.Create(Spritesheet, null);
 		
 		return Vessel;
 	}
@@ -164,10 +165,10 @@ class RueScrollView extends RueView
 			_ClickRec.Y = ParentY + _Position._Y;
 			if (_ClickRec.ContainsFPoint(ClickX, ClickY))
 			{
-				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X, ParentY + _Position._Y);
+				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X + _CurrentDragX, ParentY + _Position._Y+_CurrentDragY);
 				if ( Attempt == null) //if no children are being clicked then this one is being clicked
 				{
-					return Self;
+					return RueScrollSelf;
 				}
 				else
 				{
@@ -179,11 +180,11 @@ class RueScrollView extends RueView
 	}
 	
 	
-	public function AddGraphicHooked(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Hook:ScreenGraphic = null):RueView
+	public function AddGraphicHooked(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Hook:ScreenGraphic = null):RueScrollView
 	{
 		Hook = ScreenGraphic.Create(Desc, Layer, X, Y, Alpha);
 		_Graphics.Add(Hook);
-		return Self;
+		return RueScrollSelf;
 	}
 	
 
