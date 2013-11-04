@@ -1,5 +1,6 @@
 package engine.templates;
 import engine.base.RueObject;
+import engine.helpers.render.DrawStack;
 import flash.display.Sprite;
 import flash.text.Font;
 import flash.text.TextField;
@@ -29,14 +30,13 @@ class RueTextField extends RueObject implements IScreenGraphic
 		RueTextFieldSelf = this;
 	}
 	
-	public static function Create(Parent:Sprite, X:Float, Y:Float, Size:Int, TheFont:Font, Editable:Bool = false, Selectable:Bool = false):RueTextField
+	public static function Create(X:Float, Y:Float, Size:Int, TheFont:Font, Editable:Bool = false, Selectable:Bool = false):RueTextField
 	{
 		var Vessel:RueTextField;
 		if(RueTextFieldHead != null) { Vessel = RueTextFieldHead; RueTextFieldHead = RueTextFieldHead.RueTextFieldNext; }
 		else { Vessel = new RueTextField(); }
 		Vessel.InPool = false;
 		
-		Vessel._Parent = Parent;
 		Vessel._Font = TheFont;
 
 		Vessel._Text = new TextField();
@@ -51,8 +51,6 @@ class RueTextField extends RueObject implements IScreenGraphic
 		Vessel._Text.defaultTextFormat = TheTextFormat;
 		Vessel._Text.setTextFormat(TheTextFormat);
 
-		Parent.addChild(Vessel._Text);
-		
 		return Vessel;
 	}
 	
@@ -61,7 +59,10 @@ class RueTextField extends RueObject implements IScreenGraphic
 		var X:Float = _Text.x;
 		var Y:Float = _Text.y;
 		
-		_Parent.removeChild(Text); 
+		if (_Parent != null)
+		{
+			_Parent.removeChild(_Text); 
+		}
 
 		_Text = new TextField();
 		_Text.mouseEnabled = false;
@@ -69,10 +70,13 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Text.embedFonts = true;
 		_Text.width = ToThis.length * (_Size+1);
 		_Text.height = (_Size + 1);
-		_Text.text = ThisWords;
-		_TextForm = new TextFormat(_Font.fontName, _Size);
-		_Text.setTextFormat(TextForm);
-		_Parent.addChild(Text);
+		_Text.text = ToThis;
+		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size);
+		_Text.setTextFormat(_TextForm);
+		if (_Parent != null)
+		{
+			_Parent.addChild(_Text); 
+		}
 		_Text.x = X;
 		_Text.y = Y;
 	}
@@ -96,8 +100,20 @@ class RueTextField extends RueObject implements IScreenGraphic
 	
 	/* INTERFACE engine.templates.IScreenGraphic */
 	
-	public function DrawFrom(ParentX:Float, ParentY:Float, CameraBound:Bool):Void 
+	public function DrawFrom(ParentX:Float, ParentY:Float, RenderTarget:DrawStack, CameraBound:Bool):Void 
 	{
+		if (_Parent == null)
+		{
+			_Parent = RenderTarget.Target;
+			_Parent.addChild(_Text);
+		}
+		else
+		if (RenderTarget.Target != _Parent)
+		{
+			_Parent.removeChild(_Text);
+			RenderTarget.Target.addChild(_Text);
+			_Parent = RenderTarget.Target;
+		}
 		//textfields are always camera bound
 		_Text.x = ParentX + _X;
 		_Text.y = ParentY + _Y;

@@ -119,12 +119,18 @@ class GraphicsComponent
 	
 	public function RenderToScreen(X:Float, Y:Float):Void
 	{
+		#if debug
+		if (TargetCanvas.TheSheet != Description.TheTileSheet) { throw "Inconsistant Target canvas, The graphic component must belong to the same spritesheet as the canvas"; }
+		#end
 		var ID:Int = Description.UIDS[CurrentFrame];
 		TargetCanvas.AddToRender(Layer, ID, X, Y, Rotation, Alpha);
 	}
 	
 	public function RenderToCamera(X:Float, Y:Float):Void
 	{
+		#if debug
+		if (TargetCanvas.TheSheet != Description.TheTileSheet) { throw "Inconsistant Target canvas, The graphic component must belong to the same spritesheet as the canvas"; }
+		#end
 		var ID:Int = Description.UIDS[CurrentFrame];
 		TargetCanvas.AddToRender(Layer, ID, X + TileRenderSystem.CameraX*CameraRatioX, Y + TileRenderSystem.CameraY*CameraRatioY, Rotation, Alpha);
 	}

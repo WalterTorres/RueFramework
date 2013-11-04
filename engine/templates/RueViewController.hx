@@ -3,6 +3,7 @@ package engine.templates;
 import engine.base.Entity;
 import engine.base.EntityGroup;
 import engine.helpers.Profiler;
+import engine.helpers.render.DrawStack;
 import engine.systems.MouseInputSystem;
 import engine.systems.SoundSystem;
 import engine.components.PhysicsComponent;
@@ -22,7 +23,8 @@ class RueViewController
 	var Next:RueViewController;
 	var Self:RueViewController;
 	
-	public var _TheView:RueView;
+	var _TheView:RueView;
+	var _RenderTarget:DrawStack;
 	
 	private function new() 
 	{
@@ -30,24 +32,37 @@ class RueViewController
 		Self = this;
 	}
 	
-	public static function Create(Group:EntityGroup):RueViewController
+	public static function Create(Group:EntityGroup, RenderTarget:DrawStack):RueViewController
 	{
 		var Vessel:RueViewController;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new RueViewController(); }
 		Vessel.Setup(Group);
+		Vessel._RenderTarget = RenderTarget;
 		
 		return Vessel;
 	}
-	public static function CreateWithView(Group:EntityGroup, View:RueView):RueViewController
+	public static function CreateWithView(Group:EntityGroup, RenderTarget:DrawStack, View:RueView):RueViewController
 	{
 		var Vessel:RueViewController;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new RueViewController(); }
 		Vessel.Setup(Group);
 		Vessel._TheView = View;
+		Vessel._RenderTarget = RenderTarget;
 		return Vessel;
 	}
+	
+	public function SetView(TheView:RueView):Void
+	{
+		if (_TheView != null)
+		{
+			_TheView.Recycle(); //since the view we are replacing wont have anywhere to go, make sure you delete everything it contains in order to prevent memory leaks
+		}
+		
+		_TheView = TheView;
+	}
+	
 	private var UniqueDragging:RueView;
 	override public function PreUpdate():Void
 	{
@@ -98,14 +113,17 @@ class RueViewController
 	
 	override public function Update():Void
 	{
-		
+		DoesUpdate = false;
 	}
 	
 	override public function Draw():Void 
 	{
 		if (_TheView != null)
 		{
-			_TheView.Render(0,0);
+			if (_RenderTarget != null)
+			{
+				_TheView.Render(0, 0, _RenderTarget);
+			}
 		}
 	}
 	

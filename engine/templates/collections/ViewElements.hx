@@ -1,5 +1,6 @@
 package engine.templates.collections;
 import engine.base.RueObject;
+import engine.helpers.render.DrawStack;
 import engine.templates.RueView;
 
 /**
@@ -52,7 +53,7 @@ class ViewElements
 		}
 	}
 	
-	public function Render(X:Float, Y:Float):Void
+	public function Render(X:Float, Y:Float, Canvas:DrawStack):Void
 	{
 		var Current:ViewElementsNode = _HeadNode;
 		if (Current == null) { return; }
@@ -62,7 +63,7 @@ class ViewElements
 		}
 		while (Current != null)
 		{
-			Current._Target.Render(X, Y);
+			Current._Target.Render(X, Y, Canvas);
 			Current = Current._PreviousNode;
 		}
 	}

@@ -1,5 +1,6 @@
 package engine.templates.collections;
 import engine.base.RueObject;
+import engine.helpers.render.DrawStack;
 import engine.templates.IScreenGraphic;
 import engine.templates.ScreenGraphic;
 
@@ -54,13 +55,13 @@ class ScreenGraphicList
 		}
 	}
 	
-	public function DrawAll(ParentX:Float, ParentY:Float, Rotation:Float, CameraBound:Bool):Void
+	public function DrawAll(ParentX:Float, ParentY:Float, Rotation:Float, Canvas:DrawStack, CameraBound:Bool):Void
 	{
 		var Current:ScreenGraphicListNode = _HeadNode;
 		while (Current != null)
 		{
 			Current._Target.SetRotation(Rotation);
-			Current._Target.DrawFrom(ParentX, ParentY, CameraBound);
+			Current._Target.DrawFrom(ParentX, ParentY, Canvas, CameraBound);
 			Current = Current._NextNode;
 		}
 	}

@@ -37,20 +37,20 @@ class RueScrollView extends RueView
 	var _Width:Float;
 	var _Height:Float;
 	
+	var _RenderTarget:DrawStack;
+	
 	private function new() 
 	{
 		super();
 		RueScrollSelf = this;
 	}
 
-	public static function Create(Spritesheet:TileSheetEntry, Target:Sprite, LayerCount:Int = 2, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0, MinX:Float = 0, MinY:Float = 0, MaxX:Float = 0, MaxY:Float = 0):RueScrollView
+	public static function Create(Spritesheet:TileSheetEntry, LayerCount:Int = 2, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0, MinX:Float = 0, MinY:Float = 0, MaxX:Float = 0, MaxY:Float = 0):RueScrollView
 	{
 		var Vessel:RueScrollView;
 		if (RueScrollHead != null) { Vessel = RueScrollHead; RueScrollHead = RueScrollHead.RueScrollNext; }
 		else { Vessel = new RueScrollView(); }
 		Vessel.InPool = false;
-		Vessel._RenderTarget = DrawStack.Create(Spritesheet, Target, LayerCount);
-		Vessel._RenderTarget.SetFocusRect(Position._X, Position._Y, Width, Height);
 		Vessel._Position = Position;
 		
 		if (Width != 0 && Height != 0)
@@ -119,15 +119,27 @@ class RueScrollView extends RueView
 		_LastDragY = MouseInputSystem.Y;
 	}
 	
-	override public function Render(ParentX:Float, ParentY:Float):Void 
+	override public function Render(ParentX:Float, ParentY:Float, Canvas:DrawStack):Void 
 	{
 		if (_IsHidden) { return; }
 		_OnDraw.TriggerAll();
+		
+		if (_RenderTarget.Owner == null)
+		{
+			_RenderTarget.SetOwner(Canvas.Target);
+		}
+		else
+		if (_RenderTarget.Owner != Canvas.Target)
+		{
+			_RenderTarget.SetOwner(Canvas.Target);
+		}
+		
 		_RenderTarget.SetFocusRect(_Position._X, _Position._Y, _Width, _Height);
 		var X:Float = ParentX + _CurrentDragX + _Position._X;
 		var Y:Float = ParentY + _CurrentDragY + _Position._Y;
-		_Graphics.DrawAll(X , Y, _Rotation, _CameraBound);
-		_DrawChildren.Render(X, Y);
+		
+		_Graphics.DrawAll(X , Y, _Rotation,_RenderTarget, _CameraBound);
+		_DrawChildren.Render(X, Y, _RenderTarget);
 	}
 	
 	public function SetWidthHeight(NewWidth:Float):Void
@@ -167,9 +179,9 @@ class RueScrollView extends RueView
 	}
 	
 	
-	override public function AddGraphic(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Hook:ScreenGraphic = null):RueView
+	public function AddGraphicHooked(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Hook:ScreenGraphic = null):RueView
 	{
-		Hook = ScreenGraphic.Create(Desc, _RenderTarget, Layer, X, Y, Alpha);
+		Hook = ScreenGraphic.Create(Desc, Layer, X, Y, Alpha);
 		_Graphics.Add(Hook);
 		return Self;
 	}

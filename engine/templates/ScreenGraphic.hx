@@ -26,14 +26,14 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 		Self = this;
 	}
 	
-	public static function Create(GraphicID:TileDesc, Target:DrawStack, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):ScreenGraphic
+	public static function Create(GraphicID:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):ScreenGraphic
 	{
 		var Vessel:ScreenGraphic;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new ScreenGraphic(); }
 		Vessel.InPool = false;
 		
-		Vessel._Graphic = GraphicsComponent.Create(GraphicID, Target, Layer);
+		Vessel._Graphic = GraphicsComponent.Create(GraphicID, null, Layer);
 		Vessel._Graphic.Alpha = Alpha;
 		Vessel._X = X;
 		Vessel._Y = Y;
@@ -41,8 +41,10 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 		return Vessel;
 	}
 
-	public function DrawFrom(ParentX:Float, ParentY:Float, CameraBound:Bool):Void
+	public function DrawFrom(ParentX:Float, ParentY:Float, Canvas:DrawStack, CameraBound:Bool):Void
 	{
+		_Graphic.TargetCanvas = Canvas;
+		
 		if (CameraBound)
 		{
 			_Graphic.RenderToCamera(ParentX + _X, ParentY + _Y);
@@ -62,7 +64,6 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 	{
 		_Graphic.Alpha = Alpha;
 	}
-	
 	
 	public override function Recycle():Void
 	{

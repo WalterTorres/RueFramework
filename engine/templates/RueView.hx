@@ -54,15 +54,13 @@ class RueView extends RueObject
 	public var _ElasticSpeedX:Float;
 	public var _ElasticSpeedY:Float;
 	
-	public var _RenderTarget:DrawStack;
-	
 	private function new() 
 	{
 		super();
 		Self = this;
 	}
 
-	public static function Create(RenderTarget:DrawStack, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueView
+	public static function Create(Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueView
 	{
 		var Vessel:RueView;
 		if (Head != null) { Vessel = Head; Head = Head.Next; }
@@ -91,7 +89,6 @@ class RueView extends RueObject
 		Vessel._ElasticSpeedY = 5.5;
 		Vessel._Rotation = 0;
 		Vessel._CameraBound = false;
-		Vessel._RenderTarget = RenderTarget;
 		
 		return Vessel;
 	}
@@ -132,7 +129,7 @@ class RueView extends RueObject
 		_LastDragY = MouseInputSystem.Y;
 	}
 	
-	public function Render(ParentX:Float, ParentY:Float):Void
+	public function Render(ParentX:Float, ParentY:Float, RenderTarget:DrawStack):Void
 	{
 		if (_IsHidden) { return; }
 		if (!_IsDragging)
@@ -171,8 +168,8 @@ class RueView extends RueObject
 
 		
 		
-		_Graphics.DrawAll(X , Y, _Rotation, _CameraBound);
-		_DrawChildren.Render(X, Y);
+		_Graphics.DrawAll(X , Y, _Rotation, RenderTarget, _CameraBound);
+		_DrawChildren.Render(X, Y, RenderTarget);
 		
 		_OnDraw.TriggerAll();
 	}
@@ -215,7 +212,7 @@ class RueView extends RueObject
 	
 	public function AddGraphic(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):RueView
 	{
-		_Graphics.Add(ScreenGraphic.Create(Desc, _RenderTarget, Layer, X, Y, Alpha));
+		_Graphics.Add(ScreenGraphic.Create(Desc, Layer, X, Y, Alpha));
 		return Self;
 	}
 	

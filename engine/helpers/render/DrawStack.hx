@@ -27,7 +27,7 @@ class DrawStack extends RueObject
 	
 	public var TheSheet:TileSheetEntry;
 	public var Target:Sprite;
-	var Owner:Sprite;
+	public var Owner:Sprite;
 	
 	var _InnerLayers:Array<DrawNodeCountPair>;
 	
@@ -47,6 +47,7 @@ class DrawStack extends RueObject
 	var _CurrentY:Float;
 	
 	var _PositionChanged:Bool;
+	var _InnerLayerCount:Int;
 	
 	public var _FocusRect:Rectangle;
 	
@@ -55,13 +56,22 @@ class DrawStack extends RueObject
 		super();
 		Self = this;
 	}
+	
+	public function SetOwner(NewOwner:Sprite):Void
+	{
+		if (Owner != null)
+		{
+			Owner.removeChild(Target);
+		}
+		NewOwner.addChild(Target);
+	}
 
 	// The tile sheet that contains the bitmap data
 	// The target sprite where to render the data
 	// The global layer on which we will be adding our child target
 	// The scale X
 	// The scale Y
-	public static function Create(TileSheet:TileSheetEntry, Owner:Sprite, Layer:Int = 1, ScaleX:Float = 1, ScaleY:Float = 1, Alpha:Float = 1.0, RenderOnce:Bool = false ):DrawStack
+	public static function Create(TileSheet:TileSheetEntry, Owner:Sprite = null, Layer:Int = 1, ScaleX:Float = 1, ScaleY:Float = 1, Alpha:Float = 1.0, RenderOnce:Bool = false ):DrawStack
 	{
 		var Vessel:DrawStack;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -95,8 +105,13 @@ class DrawStack extends RueObject
 			Vessel._InnerLayers[i] = DrawNodeCountPair.Create();
 		}
 		
+		Vessel._InnerLayerCount = Layer;
+		
 		Vessel.Owner = Owner;
-		Owner.addChild(Vessel.Target);
+		if (Owner != null)
+		{
+			Owner.addChild(Vessel.Target);
+		}
 
 		Layers.Add(Vessel);//automatically adds itself to the rendering
 		return Vessel;
@@ -182,7 +197,10 @@ class DrawStack extends RueObject
 			
 			_InnerLayers = null;
 			
-			Owner.removeChild(Target);
+			if (Owner != null)
+			{
+				Owner.removeChild(Target);
+			}
 			Target = null;
 			super.Recycle();
 		}
@@ -196,6 +214,12 @@ class DrawStack extends RueObject
 	
 	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float, Alpha:Float):Void
 	{
+		while (Layer > _InnerLayerCount)
+		{
+			_InnerLayerCount++;
+			_InnerLayers.push(DrawNodeCountPair.Create());
+		}
+		
 		var LayerToAdd:DrawNodeCountPair = _InnerLayers[Layer];
 		var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
 		var NewNode:DrawNode = DrawNode.Create(X - Offset.ValueOne, Y - Offset.ValueTwo, UniqueID, Rotation, Alpha);
