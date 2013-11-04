@@ -135,7 +135,7 @@ class RueScrollView extends RueView
 			_RenderTarget.SetOwner(Canvas.Target);
 		}
 		
-		_RenderTarget.SetFocusRect(_Position._X, _Position._Y, _Width, _Height);
+		_RenderTarget.SetFocusRect(_Position._X + ParentX, _Position._Y+ParentY, _Width, _Height);
 		var X:Float = ParentX + _CurrentDragX + _Position._X;
 		var Y:Float = ParentY + _CurrentDragY + _Position._Y;
 		
@@ -165,14 +165,21 @@ class RueScrollView extends RueView
 			_ClickRec.Y = ParentY + _Position._Y;
 			if (_ClickRec.ContainsFPoint(ClickX, ClickY))
 			{
-				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X + _CurrentDragX, ParentY + _Position._Y+_CurrentDragY);
-				if ( Attempt == null) //if no children are being clicked then this one is being clicked
+				if (MouseInputSystem.Clicked)
 				{
-					return RueScrollSelf;
+					var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X + _CurrentDragX, ParentY + _Position._Y+_CurrentDragY);
+					if ( Attempt == null) //if no children are being clicked then this one is being clicked
+					{
+						return RueScrollSelf;
+					}
+					else
+					{
+						return Attempt;
+					}
 				}
 				else
 				{
-					return Attempt;
+					return RueScrollSelf;
 				}
 			}
 		}
