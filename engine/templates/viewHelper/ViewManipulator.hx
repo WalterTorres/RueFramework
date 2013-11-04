@@ -149,15 +149,15 @@ class ViewManipulator
 		return Self;
 	}
 	
-	public function StepAlpha(ToThis:Float, FromThis:Float, OverThisMuchTime:Float = 1.0):ViewManipulator
+	public function StepAlpha(ToThis:Float, FromThis:Float, OverThisMuchTime:Float, EaseOption:Ease):ViewManipulator
 	{
 		if (_CurrentlyDoing != null)
 		{
-			_CurrentlyDoing.AddStep(MotionStep.Create(AlphaStep.Create(_Target, FromThis, ToThis, OverThisMuchTime), Self));
+			_CurrentlyDoing.AddStep(MotionStep.Create(AlphaStep.Create(_Target, FromThis, ToThis, OverThisMuchTime, EaseOption), Self));
 		}
 		else
 		{
-			_CurrentlyDoing = MotionStep.Create(AlphaStep.Create(_Target, FromThis, ToThis, OverThisMuchTime), Self);
+			_CurrentlyDoing = MotionStep.Create(AlphaStep.Create(_Target, FromThis, ToThis, OverThisMuchTime, EaseOption), Self);
 		}
 		return Self;
 	}

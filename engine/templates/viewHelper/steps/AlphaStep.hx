@@ -5,6 +5,7 @@ import engine.gameElements.interfaces.IMotionStep;
 import engine.helpers.Profiler;
 import engine.helpers.RueMath;
 import engine.templates.RueView;
+import engine.templates.viewHelper.steps.enums.Ease;
 
 /**
  * ...
@@ -22,6 +23,7 @@ class AlphaStep extends RueObject implements IMotionStep
 	var _OverThisMuhcTime:Float;
 	var _Elapsed:Float;
 	var _Target:RueView;
+	var _Ease:Ease;
 	
 
 	private function new() 
@@ -30,7 +32,7 @@ class AlphaStep extends RueObject implements IMotionStep
 		Self = this;
 	}
 	
-	public static function Create(Target:RueView, StartAlpha:Float, EndAlpha:Float, OverThisMuhcTime:Float):AlphaStep
+	public static function Create(Target:RueView, StartAlpha:Float, EndAlpha:Float, OverThisMuhcTime:Float, EaseOption:Ease):AlphaStep
 	{
 		var Vessel:AlphaStep;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -42,6 +44,7 @@ class AlphaStep extends RueObject implements IMotionStep
 		Vessel._EndAlpha = EndAlpha;
 		Vessel._OverThisMuhcTime = OverThisMuhcTime;
 		Vessel._Elapsed = 0.0;
+		Vessel._Ease = EaseOption;
 		
 		return Vessel;
 	}
@@ -49,7 +52,26 @@ class AlphaStep extends RueObject implements IMotionStep
 	public function Step():Bool 
 	{
 		_Elapsed += Profiler.ElapsedTime / _OverThisMuhcTime;
-		var CurrentAlpha:Float = RueMath.Lerp(_StartAlpha, _EndAlpha, _Elapsed);
+		
+		var CurrentAlpha:Float = 0;
+		switch(_Ease)
+		{
+			case EASE_IN:
+			{
+				CurrentAlpha = RueMath.Lerp3(_StartAlpha, _EndAlpha, _Elapsed);
+			}
+			
+			case BOUNCE_IN:
+			{
+				CurrentAlpha = RueMath.Lerp3Inverted(_StartAlpha, _EndAlpha, _Elapsed);
+			}
+			
+			default:
+			{
+				CurrentAlpha = RueMath.Lerp(_StartAlpha, _EndAlpha, _Elapsed);
+			}
+		}
+		
 		_Target._Graphics.ChangeAlphaOfAllTo(CurrentAlpha);
 		if (CurrentAlpha == _EndAlpha)
 		{
