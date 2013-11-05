@@ -230,19 +230,19 @@ class RueView extends RueObject
 		}
 	}
 	
-	public function AddOnRecycleEvent(OnRes:Void->Void):Void
+	public function AddOnRecycleEvent(OnRes:Void->Void):RueNodeConnection
 	{
-		_OnRecycle.Add(RueCallback.Create(OnRes));
+		return _OnRecycle.Add(RueCallback.Create(OnRes));
 	}
 	
-	public function AddOnDrawEvent(OnDraw:Void->Void):Void
+	public function AddOnDrawEvent(OnDraw:Void->Void):RueNodeConnection
 	{
-		_OnDraw.Add(RueCallback.Create(OnDraw));
+		return _OnDraw.Add(RueCallback.Create(OnDraw));
 	}
 	
-	public function AddOnClickEvent(OnClick:Void->Void):Void
+	public function AddOnClickEvent(OnClick:Void->Void):RueNodeConnection
 	{
-		_OnClick.Add(RueCallback.Create(OnClick));
+		return _OnClick.Add(RueCallback.Create(OnClick));
 	}
 	
 	override public function Recycle():Void 

@@ -45,7 +45,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 		Vessel._Y = Y;
 		Vessel._Size = Size;
 		Vessel._Color = color;
-		Vessel.ChangeTextTo("Description");
+		Vessel.ChangeTextTo("");
 
 		return Vessel;
 	}
@@ -62,6 +62,40 @@ class RueTextField extends RueObject implements IScreenGraphic
 		}
 		
 		
+		if (_Parent != null)
+		{
+			_Parent.removeChild(_Text); 
+		}
+
+		_Text = new TextField();
+		_Text.mouseEnabled = false;
+		_Text.selectable = false;
+		_Text.embedFonts = true;
+		_Text.width = ToThis.length * (_Size+1);
+		_Text.height = (_Size*1.5);
+		_Text.text = ToThis;
+		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size, _Color );
+		_Text.setTextFormat(_TextForm);
+		if (_Parent != null)
+		{
+			_Parent.addChild(_Text); 
+		}
+		_Text.x = X;
+		_Text.y = Y;
+	}
+	
+	public function ChangeColor(ToThisColor:UInt):Void
+	{
+		_Color = ToThisColor;
+		var ToThis:String = _Text.text;
+		
+		var X:Float = 0;
+		var Y:Float = 0;
+		if (_Text != null)
+		{
+			X = _Text.x;
+			Y = _Text.y;	
+		}
 		if (_Parent != null)
 		{
 			_Parent.removeChild(_Text); 
