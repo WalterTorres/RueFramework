@@ -8,6 +8,31 @@ import engine.components.PhysicsComponent;
 
 class RueMath 
 {
+	public static function SecondsToDateFormat(Seconds:Int):String
+	{
+		trace("attempting to create date from seconds");
+		
+		var Hours:Int = Std.int(Seconds / 3600);
+		Seconds -= Hours * 3600;
+		var Minutes:Int = Std.int(Seconds / 60);
+		Seconds -= Minutes * 60;
+		//var TheDate:Date = new Date(0, 0, 0, Hours, Minutes, Seconds);
+		var comp:String = "" + Hours + "h: " + Minutes + "m: " + Seconds + "s";
+		return comp;
+	}
+	
+	//will return in seconds how much time has passed from one date to the other
+	/**
+	 * 
+	 * @param	FromThisDate	The current date that is now
+	 * @param	ToThisDate		The past date
+	 * @return
+	 */
+	public static function DeltaTime(FromThisDate:Date, ToThisDate:Date):Int
+	{
+		return Std.int(DateTools.delta(FromThisDate, -1 * ToThisDate.getTime()).getTime()/1000);
+	}
+	
 	public static function ToFormattedNumberString(pars:Int):String
 	{
 		var Current:Int = pars;

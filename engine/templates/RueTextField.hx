@@ -84,6 +84,16 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Text.y = Y;
 	}
 	
+	public function CenterTo(X:Float):Void
+	{
+		_X = X - _Text.textWidth / 2;
+	}
+	
+	public function AlignTo(Y:Float):Void
+	{
+		_Y = Y - _Text.textHeight / 2;
+	}
+	
 	override public function Recycle():Void
 	{
 		if(!InPool)
