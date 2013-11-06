@@ -14,6 +14,7 @@ import engine.templates.viewHelper.steps.AlphaStep;
 import engine.templates.viewHelper.steps.CallStep;
 import engine.templates.viewHelper.steps.EasePositionStep;
 import engine.templates.viewHelper.steps.enums.Ease;
+import engine.templates.viewHelper.steps.EraseGraphicsStep;
 import engine.templates.viewHelper.steps.TranslateStep;
 import engine.templates.viewHelper.steps.WaitStep;
 import engine.World;
@@ -175,6 +176,18 @@ class ViewManipulator
 		return Self;
 	}
 	
+	public function StepEraseGraphics():ViewManipulator
+	{
+		if (_CurrentlyDoing != null)
+		{
+			_CurrentlyDoing.AddStep(MotionStep.Create(EraseGraphicsStep.Create(_Target), Self));
+		}
+		else
+		{
+			_CurrentlyDoing = MotionStep.Create(EraseGraphicsStep.Create(_Target), Self);
+		}
+		return Self;
+	}
 	
 	
 	

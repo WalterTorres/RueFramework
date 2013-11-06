@@ -45,8 +45,8 @@ class RueView extends RueObject
 	public var _MaxDragX:Float;
 	public var _MaxDragY:Float;
 	
-	var _CurrentDragX:Float;
-	var _CurrentDragY:Float;
+	public var _CurrentDragX:Float;
+	public var _CurrentDragY:Float;
 	
 	public var _IsDragging:Bool;
 	public var _Rotation:Float;

@@ -1,5 +1,6 @@
 package engine.templates.collections;
 import engine.base.RueObject;
+import engine.helpers.Profiler;
 import engine.helpers.render.DrawStack;
 import engine.templates.IScreenGraphic;
 import engine.templates.ScreenGraphic;
@@ -18,7 +19,6 @@ class ScreenGraphicList
 	public var _HeadNode:ScreenGraphicListNode;
 	
 	private function new() 
-	 
 	{
 		Self = this;
 	}
@@ -76,13 +76,25 @@ class ScreenGraphicList
 		}
 	}
 	
-	
 	public function RecycleElements():Void
 	{
 		while (_HeadNode != null)
 		{
 			_HeadNode._Target.Recycle();
 		}
+	}
+	
+	public function Count():Int
+	{
+		var count:Int = 0;
+		var Current:ScreenGraphicListNode = _HeadNode;
+		while (Current != null)
+		{
+			count++;
+			Current = Current._NextNode;
+		}
+		
+		return count;
 	}
 	
 	public function Recycle():Void
