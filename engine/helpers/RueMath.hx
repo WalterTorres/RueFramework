@@ -25,7 +25,7 @@ class RueMath
 	 * Will return a string composed like this: (120 seconds) => 2:00 || (36125 seconds) = 1:02:05
 	 * @param	Seconds
 	 */
-	public static function SecondsToHMS(Seconds:Int):Void
+	public static function SecondsToHMS(Seconds:Int):String
 	{
 		var Hours:Int = Std.int(Seconds / 3600);
 		Seconds -= Hours * 3600;
