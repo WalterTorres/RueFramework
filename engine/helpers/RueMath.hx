@@ -21,6 +21,82 @@ class RueMath
 		return comp;
 	}
 	
+	/**
+	 * Will return a string composed like this: (120 seconds) => 2:00 || (36125 seconds) = 1:02:05
+	 * @param	Seconds
+	 */
+	public static function SecondsToHMS(Seconds:Int):Void
+	{
+		var Hours:Int = Std.int(Seconds / 3600);
+		Seconds -= Hours * 3600;
+		var Minutes:Int = Std.int(Seconds / 60);
+		Seconds -= Minutes * 60;
+		//var TheDate:Date = new Date(0, 0, 0, Hours, Minutes, Seconds);
+		var comp:String = "";
+		if (Hours > 0)
+		{
+			if (Minutes > 9)
+			{
+				if (Seconds > 9)
+				{
+					comp = "" + Hours + ":" + Minutes + ":" + Seconds;
+				}
+				else
+				{
+					comp = "" + Hours + ":" + Minutes + ":0" + Seconds;
+				}
+			}
+			else
+			{
+				if (Seconds > 9)
+				{
+					comp = "" + Hours + ":0" + Minutes + ":" + Seconds;
+				}
+				else
+				{
+					comp = "" + Hours + ":0" + Minutes + ":0" + Seconds;
+				}
+			}
+		}
+		else if (Minutes > 0)
+		{
+			if (Minutes > 9)
+			{
+				if (Seconds > 9)
+				{
+					comp = "" + Minutes + ":" + Seconds;
+				}
+				else
+				{
+					comp = "" + Minutes + ":0" + Seconds;
+				}
+			}
+			else
+			{
+				if (Seconds > 9)
+				{
+					comp = "" + Minutes + ":" + Seconds;
+				}
+				else
+				{
+					comp = "" + Minutes + ":0" + Seconds;
+				}
+			}
+		}
+		else if (Seconds > 0)
+		{
+			if (Seconds > 9)
+			{
+				comp = "0:" + Seconds;
+			}
+			else
+			{
+				comp = "0:0" + Seconds;
+			}
+		}
+		return comp;
+	}
+	
 	//will return in seconds how much time has passed from one date to the other
 	/**
 	 * 
