@@ -222,8 +222,8 @@ class World
 			MouseInputSystem.XRate = 1 / Smallest; //here I do some scaling for my input, since the input X and Y is linked directly to the resolution of the device, this will make sure that I get an input X Y related to my own resolution.
 			MouseInputSystem.YRate = 1 / Smallest;
 			
-			MainSprite.x = OffsetX-3; //-3 because right now there is a bug of some sort that does not align the main view properly.
-			MainSprite.y = OffsetY-3; 
+			MainSprite.x = OffsetX; //; 3; //-3 because right now there is a bug of some sort that does not align the main view properly.
+			MainSprite.y = OffsetY;// -3; 
 			
 			MouseInputSystem.LetterBoxOffsetX = OffsetX; //this is used for my own system that records user input, modifying this 
 			MouseInputSystem.LetterBoxOffsetY = OffsetY;

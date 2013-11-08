@@ -92,9 +92,6 @@ class TileRenderSystem
 	public static function Render():Void
 	{
 		MainCanvas.clear();
-		MainCanvas.beginFill(0xFFFFFF);
-		MainCanvas.drawRect(0, 0, World.Self.TargetWidth, World.Self.TargetHeight);
-		MainCanvas.endFill();
 		TileSheetEntry.TheGraphics.clear();
 		TileSheetEntry.TheGuiGraphics.clear();
 		TileSheetEntry.TheBGGraphics.clear();

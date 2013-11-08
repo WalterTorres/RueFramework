@@ -52,6 +52,11 @@ class RueTextField extends RueObject implements IScreenGraphic
 	
 	public function ChangeTextTo(ToThis:String):Void
 	{
+		if (_Text != null)
+		{
+			if (ToThis == _Text.text) { return; }
+		}
+		
 		var X:Float = 0;
 		var Y:Float = 0;
 		

@@ -22,7 +22,7 @@ class RueMath
 	}
 	
 	/**
-	 * Will return a string composed like this: (120 seconds) => 2:00 || (36125 seconds) = 1:02:05
+	 * Will return a string composed like this: (120 seconds) => 2:00 || (36125 seconds) => 1:02:05 || (0 seconds) => 0:00
 	 * @param	Seconds
 	 */
 	public static function SecondsToHMS(Seconds:Int):String
@@ -32,7 +32,7 @@ class RueMath
 		var Minutes:Int = Std.int(Seconds / 60);
 		Seconds -= Minutes * 60;
 		//var TheDate:Date = new Date(0, 0, 0, Hours, Minutes, Seconds);
-		var comp:String = "";
+		var comp:String = "0:00";
 		if (Hours > 0)
 		{
 			if (Minutes > 9)
