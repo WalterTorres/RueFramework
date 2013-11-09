@@ -55,12 +55,11 @@ class ScreenGraphicList
 		}
 	}
 	
-	public function DrawAll(ParentX:Float, ParentY:Float, Rotation:Float, Canvas:DrawStack, CameraBound:Bool):Void
+	public function DrawAll(ParentX:Float, ParentY:Float, Canvas:DrawStack, CameraBound:Bool):Void
 	{
 		var Current:ScreenGraphicListNode = _HeadNode;
 		while (Current != null)
 		{
-			Current._Target.SetRotation(Rotation);
 			Current._Target.DrawFrom(ParentX, ParentY, Canvas, CameraBound);
 			Current = Current._NextNode;
 		}

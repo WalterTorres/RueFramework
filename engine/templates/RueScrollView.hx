@@ -139,7 +139,7 @@ class RueScrollView extends RueView
 		var X:Float = ParentX + _CurrentDragX + _Position._X;
 		var Y:Float = ParentY + _CurrentDragY + _Position._Y;
 		
-		_Graphics.DrawAll(X , Y, _Rotation,_RenderTarget, _CameraBound);
+		_Graphics.DrawAll(X , Y,_RenderTarget, _CameraBound);
 		_DrawChildren.Render(X, Y, _RenderTarget);
 	}
 	

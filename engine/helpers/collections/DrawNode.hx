@@ -42,6 +42,7 @@ class DrawNode
 		Vessel.PositionX = X;// Std.int(X);
 		Vessel.PositionY = Y;// Std.int(Y);
 		Vessel.Frame = Frame;
+
 		Vessel.Rotation = Rotation;
 		Vessel.Alpha = Alpha;
 		Vessel.NextNode = null;

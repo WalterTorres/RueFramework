@@ -23,6 +23,23 @@ class TileDesc
 		UIDS = new Array<Int>();
 	}
 	
+	public static function CreateAnimationFrom(Sheet:TileSheetEntry, Additions:Array<TileDesc>):TileDesc
+	{
+		var NewDesc:TileDesc = new TileDesc(Sheet);
+		
+		var count:Int = Additions.length;
+		
+		for (i in 0...count)
+		{
+			var Current:TileDesc = Additions[i];
+			NewDesc.UIDS.push(Current.UIDS[0]);
+			NewDesc.DS.push(Current.DS[0]);
+			NewDesc.FrameCount++;
+		}
+		
+		return NewDesc;
+	}
+	
 	public function AddFrame_1(ID:Int, D:Float):TileDesc
 	{
 		FrameCount = 1; UIDS.push(ID); DS.push(D);

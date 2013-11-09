@@ -168,7 +168,7 @@ class RueView extends RueObject
 
 		
 		
-		_Graphics.DrawAll(X , Y, _Rotation, RenderTarget, _CameraBound);
+		_Graphics.DrawAll(X , Y, RenderTarget, _CameraBound);
 		_DrawChildren.Render(X, Y, RenderTarget);
 		
 		_OnDraw.TriggerAll();

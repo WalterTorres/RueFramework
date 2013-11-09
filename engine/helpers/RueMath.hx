@@ -10,8 +10,6 @@ class RueMath
 {
 	public static function SecondsToDateFormat(Seconds:Int):String
 	{
-		trace("attempting to create date from seconds");
-		
 		var Hours:Int = Std.int(Seconds / 3600);
 		Seconds -= Hours * 3600;
 		var Minutes:Int = Std.int(Seconds / 60);
