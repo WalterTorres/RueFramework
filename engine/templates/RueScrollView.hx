@@ -38,6 +38,7 @@ class RueScrollView extends RueView
 	var _Height:Float;
 	
 	var _RenderTarget:DrawStack;
+	public var _TakesUserInput:Bool;
 	
 	private function new() 
 	{
@@ -84,6 +85,7 @@ class RueScrollView extends RueView
 		Vessel._Rotation = 0;
 		Vessel._CameraBound = false;
 		Vessel._RenderTarget = DrawStack.Create(Spritesheet, null);
+		Vessel._TakesUserInput = true;
 		
 		return Vessel;
 	}
@@ -159,6 +161,7 @@ class RueScrollView extends RueView
 	
 	override public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView 
 	{
+		if (!_TakesUserInput) { return null; }
 		if (_ClickRec != null)
 		{
 			_ClickRec.X = ParentX + _Position._X;
