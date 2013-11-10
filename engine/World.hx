@@ -164,7 +164,7 @@ class World
 		
 		
 		Profiler.Report();
-		trace(Tracking);
+		//trace(Tracking);
 	}
 	
 	public function DeactivateLetterBoxes():Void
