@@ -14,6 +14,7 @@ import engine.templates.collections.RueCallbackList;
 import engine.templates.collections.ScreenGraphicList;
 import engine.templates.collections.ViewElements;
 import flash.geom.Matrix;
+import sys.db.RecordInfos.RecordField;
 
 /**
  * ...
@@ -54,6 +55,8 @@ class RueView extends RueObject
 	public var _ElasticSpeedX:Float;
 	public var _ElasticSpeedY:Float;
 	
+	public var _TakesUserInput:Bool;
+	
 	private function new() 
 	{
 		
@@ -90,6 +93,7 @@ class RueView extends RueObject
 		Vessel._ElasticSpeedY = 5.5;
 		Vessel._Rotation = 0;
 		Vessel._CameraBound = false;
+		Vessel._TakesUserInput = true;
 		
 		
 		
@@ -179,6 +183,7 @@ class RueView extends RueObject
 	
 	public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView
 	{
+		if (!_TakesUserInput) { return null; }
 		if (_ClickRec != null)
 		{
 			_ClickRec.X = ParentX + _Position._X + _CurrentDragX;

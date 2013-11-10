@@ -25,10 +25,10 @@ class RueViewController
 	
 	var _TheView:RueView;
 	var _RenderTarget:DrawStack;
+	public var _IsActivated:Bool;
 	
 	private function new() 
 	{
-		
 		super();
 		Self = this;
 	}
@@ -40,6 +40,7 @@ class RueViewController
 		else { Vessel = new RueViewController(); }
 		Vessel.Setup(Group);
 		Vessel._RenderTarget = RenderTarget;
+		Vessel._IsActivated = true;
 		
 		return Vessel;
 	}
@@ -67,6 +68,7 @@ class RueViewController
 	private var UniqueDragging:RueView;
 	override public function PreUpdate():Void
 	{
+		if (!_IsActivated) { return; }
 		if (_TheView != null)
 		{
 			if (MouseInputSystem.Clicked)
@@ -119,6 +121,7 @@ class RueViewController
 	
 	override public function Draw():Void 
 	{
+		if (!_IsActivated) { return; }
 		if (_TheView != null)
 		{
 			if (_RenderTarget != null)

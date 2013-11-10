@@ -38,7 +38,6 @@ class RueScrollView extends RueView
 	var _Height:Float;
 	
 	var _RenderTarget:DrawStack;
-	public var _TakesUserInput:Bool;
 	
 	private function new() 
 	{
