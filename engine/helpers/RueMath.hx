@@ -19,6 +19,33 @@ class RueMath
 		return comp;
 	}
 	
+	public static function SecondsToDateFormatTrimmed(Seconds:Int):String
+	{
+		var Hours:Int = Std.int(Seconds / 3600);
+		Seconds -= Hours * 3600;
+		var Minutes:Int = Std.int(Seconds / 60);
+		Seconds -= Minutes * 60;
+		
+		var comp:String = "";// + Hours + "h: " + Minutes + "m: " + Seconds + "s";
+		if (Hours > 0)
+		{
+			comp += Hours + "h: " + Minutes + "m: " + Seconds + "s";
+		}
+		else
+		{
+			if (Minutes > 0)
+			{
+				comp +=  Minutes + "m: " + Seconds + "s";
+			}
+			else
+			{
+				comp = Seconds + "s";
+			}
+		}
+		
+		return comp;
+	}
+	
 	/**
 	 * Will return a string composed like this: (120 seconds) => 2:00 || (36125 seconds) => 1:02:05 || (0 seconds) => 0:00
 	 * @param	Seconds

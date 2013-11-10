@@ -19,10 +19,10 @@ class RueTextField extends RueObject implements IScreenGraphic
 	var RueTextFieldSelf:RueTextField;
 	
 	var _Parent:Sprite;
-	var _Text:TextField;
+	public var _Text:TextField;
 	var _Font:Font;
-	var _X:Float;
-	var _Y:Float;
+	public var _X:Float;
+	public var _Y:Float;
 	var _Size:Int;
 	var _Color:UInt;
 	

@@ -163,15 +163,15 @@ class ViewManipulator
 		return Self;
 	}
 	
-	public function StepEaseTowards(Target:RueView, X:Float, Y:Float, OverThisMuchTime:Float, EaseOption:Ease):ViewManipulator
+	public function StepEaseTowards( X:Float, Y:Float, OverThisMuchTime:Float, EaseOption:Ease):ViewManipulator
 	{
 		if (_CurrentlyDoing != null)
 		{
-			_CurrentlyDoing.AddStep(MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self));
+			_CurrentlyDoing.AddStep(MotionStep.Create(EasePositionStep.Create(_Target, _Target._Position._X, _Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self));
 		}
 		else
 		{
-			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(Target, Target._Position._X, Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self);
+			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(_Target, _Target._Position._X, _Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self);
 		}
 		return Self;
 	}
