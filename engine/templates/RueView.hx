@@ -56,6 +56,7 @@ class RueView extends RueObject
 	
 	private function new() 
 	{
+		
 		super();
 		Self = this;
 	}
@@ -89,6 +90,8 @@ class RueView extends RueObject
 		Vessel._ElasticSpeedY = 5.5;
 		Vessel._Rotation = 0;
 		Vessel._CameraBound = false;
+		
+		
 		
 		return Vessel;
 	}
@@ -224,9 +227,9 @@ class RueView extends RueObject
 	
 	public function RemoveFromParentView():Void
 	{
-		while (_HeadNode != null)
+		while (_RueHeadNode != null)
 		{
-			_HeadNode.Remove();
+			_RueHeadNode.Remove();
 		}
 	}
 	
@@ -250,7 +253,6 @@ class RueView extends RueObject
 		if (!InPool)
 		{
 			_Position.Recycle();
-			
 			if (_ClickRec != null)
 			{
 				_ClickRec.Recycle();
@@ -263,7 +265,7 @@ class RueView extends RueObject
 			_OnClick.Recycle();
 			_OnDraw.RecycleAll();
 			_OnDraw.Recycle();
-		
+
 			_DrawChildren.RecycleElements();
 			_Graphics.RecycleElements();
 			_DrawChildren.Recycle();
@@ -275,6 +277,7 @@ class RueView extends RueObject
 	
 	override public function OnRebirth():Void 
 	{
+		
 		Next = Head;
 		Head = Self;
 	}

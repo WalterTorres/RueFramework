@@ -22,6 +22,7 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 	
 	private function new() 
 	{
+			
 		super();
 		Self = this;
 	}

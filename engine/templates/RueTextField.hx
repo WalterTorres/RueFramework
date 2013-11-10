@@ -28,6 +28,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 	
 	private function new() 
 	{
+		
 		super();
 		RueTextFieldSelf = this;
 	}

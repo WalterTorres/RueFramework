@@ -39,6 +39,7 @@ class GraphicsComponent
 	
 	private function new() 
 	{
+		
 		Self = this;
 	}
 	

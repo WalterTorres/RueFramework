@@ -132,7 +132,7 @@ class RoxGestureAgent {
     }
 
     private function handleEvent(flags: Int, e: RoxGestureEvent) {
-//        trace(">>>t=" + e.target.name+",o="+owner.name+",e="+e);
+//        //trace(">>>t=" + e.target.name+",o="+owner.name+",e="+e);
         var sp: InteractiveObject = cast(e.target);
         if (sp != owner) return;
         switch (e.type) {
@@ -174,7 +174,7 @@ class RoxGestureAgent {
     }
 
     private inline static function get_multitouchSupported() : Bool {
-//        trace("multitouchSupported: isTouch=" + Multitouch.supportsTouchEvents + ",maxPoints=" + Multitouch.maxTouchPoints);
+//        //trace("multitouchSupported: isTouch=" + Multitouch.supportsTouchEvents + ",maxPoints=" + Multitouch.maxTouchPoints);
         return Multitouch.supportsTouchEvents && Multitouch.maxTouchPoints > 1;
     }
 
@@ -193,7 +193,7 @@ class RoxGestureAgent {
 
     private inline function onTouch(e: Dynamic) {
         var id: Int = e.touchPointID;
-//        trace("onTouch:e=" + e +",touchId="+id);
+//        //trace("onTouch:e=" + e +",touchId="+id);
         var prim = touch0 == null || touch0.tid == id;
         if (prim || (touch1 != null && touch1.tid == id) || (touch0 != null && touch1 == null && touch0.tid != id)) {
 //            if (handleTouch(typeMap.get(e.type), e, prim, id)) e.rox_stopPropagation();
@@ -205,7 +205,7 @@ class RoxGestureAgent {
     }
 
     private inline function onMouse(e: Dynamic) {
-//        trace("onMouse:e=" + e);
+//        //trace("onMouse:e=" + e);
         var t: String = e.type;
         if (t == MouseEvent.MOUSE_DOWN || t == MouseEvent.MOUSE_UP || e.buttonDown) {
 //            if (handleTouch(typeMap.get(t), e, true, 0)) e.rox_stopPropagation();
@@ -214,7 +214,7 @@ class RoxGestureAgent {
     }
 
     private function handleTouch(type: String, e: Dynamic, prim: Bool, touchId: Int) : Bool {
-//        trace("type=" + type + ",e=" + e);
+//        //trace("type=" + type + ",e=" + e);
         var pt = new TouchPoint(owner, e, touchId);
         var tp = prim ? touch0 : touch1;
         if (type == RoxGestureEvent.TOUCH_MOVE && tp != null && pt.distSqr(tp) < moveToleSqr) return false; // NO MOVE -> skip

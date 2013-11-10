@@ -1,5 +1,6 @@
 package engine.templates.collections;
 import engine.base.RueObject;
+import engine.World;
 
 /**
  * ...

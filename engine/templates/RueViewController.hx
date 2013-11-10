@@ -28,6 +28,7 @@ class RueViewController
 	
 	private function new() 
 	{
+		
 		super();
 		Self = this;
 	}

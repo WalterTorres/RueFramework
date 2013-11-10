@@ -1,4 +1,5 @@
 package engine.helpers;
+import engine.base.RueObject;
 
 
 /**
@@ -6,7 +7,7 @@ package engine.helpers;
  * @author Jakegr
  */
 
-class RueRectangle 
+class RueRectangle extends RueObject
 {
 	static var Head:RueRectangle;
 	var Next:RueRectangle;
@@ -26,6 +27,7 @@ class RueRectangle
 	
 	private function new() 
 	{
+		super();
 		Self = this;
 	}
 	
@@ -41,6 +43,8 @@ class RueRectangle
 		{
 			Vessel = new RueRectangle();
 		}
+		
+		Vessel.InPool = false;
 		
 		Vessel.X = X + OffsetX;
 		Vessel.Y = Y + OffsetY;
@@ -91,7 +95,16 @@ class RueRectangle
 		 return ((((X <= PosX) && (PosX < X + Width)) && (Y <= PosY)) && (PosY < Y + Height));
 	}
 	
-	public function Recycle():Void
+	override public function Recycle():Void
+	{
+		if (!InPool)
+		{
+			super.Recycle();
+		}
+		
+	}
+	
+	override public function OnRebirth():Void 
 	{
 		Next = Head;
 		Head = Self;

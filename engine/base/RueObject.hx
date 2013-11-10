@@ -17,11 +17,12 @@ interface RueNodeConnection
 class RueObject
 {
 	public var SelfRoot:RueObject;
-	public var _HeadNode:RueObjectNode; //head node connection
+	public var _RueHeadNode:RueObjectNode; //head node connection
 	public var InPool:Bool;
 
 	private function new() 
 	{
+		//World.Tracking++;
 		SelfRoot = this;
 		InPool = false;
 	}
@@ -30,9 +31,9 @@ class RueObject
 	{
 		if (!InPool)
 		{
-			while (_HeadNode != null)
+			while (_RueHeadNode != null)
 			{
-				_HeadNode.Remove();
+				_RueHeadNode.Remove();
 			}
 			InPool = true;
 			RebirthSystem.Purgatory.Add(SelfRoot);
@@ -41,7 +42,7 @@ class RueObject
 	
 	public function PurgatoryRecycle():Void
 	{
-		_HeadNode.Remove(); //this should suffice since the only list containing this element at this point should be the rebirth list.
+		_RueHeadNode.Remove(); //this should suffice since the only list containing this element at this point should be the rebirth list.
 	}
 	
 	public function OnRebirth():Void
@@ -52,13 +53,13 @@ class RueObject
 	public inline function ConnectToNode(Node:RueNodeConnection):RueNodeConnection
 	{
 		var NewNode:RueObjectNode = RueObjectNode.Create(SelfRoot, Node);
-		if (_HeadNode != null)
+		if (_RueHeadNode != null)
 		{
-			_HeadNode._PreviousNode = NewNode;
-			NewNode._NextNode = _HeadNode;
+			_RueHeadNode._PreviousNode = NewNode;
+			NewNode._NextNode = _RueHeadNode;
 		}
-		_HeadNode = NewNode;
-		return _HeadNode;
+		_RueHeadNode = NewNode;
+		return _RueHeadNode;
 	}
 }
 
@@ -91,7 +92,7 @@ class RueObjectNode implements RueNodeConnection
 		{
 			Vessel = new RueObjectNode();
 		}
-		
+
 		Vessel._Owner = Owner;
 		Vessel._Target = Target;
 		Vessel._NextNode = null;
@@ -106,20 +107,20 @@ class RueObjectNode implements RueNodeConnection
 		Recycle();
 	}
 	
-	public inline function Recycle():Void
+	public function Recycle():Void
 	{
-		if (_Owner._HeadNode == Self)
+		if (_Owner._RueHeadNode == Self)
 		{
 			//surprise, you are the head
 			if (_NextNode != null)
 			{
 				//oh noes, you have a child
 				_NextNode._PreviousNode = null; //tell your child to forget about you
-				_Owner._HeadNode = _NextNode; //and now your child is the head.
+				_Owner._RueHeadNode = _NextNode; //and now your child is the head.
 			}
 			else
 			{
-				_Owner._HeadNode = null;
+				_Owner._RueHeadNode = null;
 			}
 		}
 		else
@@ -137,6 +138,10 @@ class RueObjectNode implements RueNodeConnection
 		
 		Next = Head;
 		Head = Self;
+		
 	}
+
+	
+	
 	
 }

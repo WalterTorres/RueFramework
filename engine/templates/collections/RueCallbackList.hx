@@ -6,8 +6,7 @@ import engine.base.RueObject;
  * @author Jakegr
  */
 
-class RueCallbackList 
-
+class RueCallbackList extends RueObject
 {
 	static var Head:RueCallbackList;
 	var Next:RueCallbackList;
@@ -16,8 +15,9 @@ class RueCallbackList
 	public var _HeadNode:RueCallbackListNode;
 	
 	private function new() 
-	 
 	{
+		
+		super();
 		Self = this;
 	}
 	
@@ -33,6 +33,7 @@ class RueCallbackList
 		{
 			Vessel = new RueCallbackList();
 		}
+		Vessel.InPool = false;
 		
 		return Vessel;
 	}
@@ -71,14 +72,23 @@ class RueCallbackList
 		}
 	}
 	
-	public function Recycle():Void
+	override public function Recycle():Void
+	{
+		if (!InPool)
+		{
+			RecycleAll();
+			//while (_HeadNode != null)
+			//{
+			//	_HeadNode.Remove();
+			//}
+			super.Recycle();
+		}
+	}
+	
+	override public function OnRebirth():Void 
 	{
 		Next = Head;
 		Head = Self;
-		while (_HeadNode != null)
-		{
-			_HeadNode.Remove();
-		}
 	}
 }
 

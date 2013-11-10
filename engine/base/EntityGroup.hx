@@ -19,6 +19,7 @@ class EntityGroup extends RueObject
 	
 	private function new() 
 	{
+		World.Tracking++;
 		super();
 		Self = this;
 	}

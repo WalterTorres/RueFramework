@@ -1,5 +1,6 @@
 package engine.components;
 import engine.base.RueObject;
+import engine.World;
 
 /**
  * ...
@@ -18,6 +19,7 @@ class PositionComponent extends RueObject
 
 	private function new() 
 	{
+					
 		super();
 		Self = this;
 	}

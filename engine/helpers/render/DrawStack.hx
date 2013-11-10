@@ -76,7 +76,7 @@ class DrawStack extends RueObject
 		var Vessel:DrawStack;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new DrawStack(); }
-
+		Vessel.InPool = false;
 		Vessel.TheSheet = TileSheet;
 		Vessel.Target = new Sprite();
 		Vessel.Target.scaleX = ScaleX;
@@ -214,16 +214,19 @@ class DrawStack extends RueObject
 	
 	public function AddToRender(Layer:Int, UniqueID:Int, X:Float, Y:Float, Rotation:Float, Alpha:Float):Void
 	{
-		while (Layer >= _InnerLayerCount)
+		if (!InPool)
 		{
-			_InnerLayerCount++;
-			_InnerLayers.push(DrawNodeCountPair.Create());
-		}
+			while (Layer >= _InnerLayerCount)
+			{
+				_InnerLayerCount++;
+				_InnerLayers.push(DrawNodeCountPair.Create());
+			}
 		
-		var LayerToAdd:DrawNodeCountPair = _InnerLayers[Layer];
-		var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
-		var NewNode:DrawNode = DrawNode.Create(X - Offset.ValueOne, Y - Offset.ValueTwo, UniqueID, Rotation, Alpha);
-		LayerToAdd.Add(NewNode);
+			var LayerToAdd:DrawNodeCountPair = _InnerLayers[Layer];
+			var Offset:FloatTupe = TheSheet.Offsets[UniqueID];
+			var NewNode:DrawNode = DrawNode.Create(X - Offset.ValueOne, Y - Offset.ValueTwo, UniqueID, Rotation, Alpha);
+			LayerToAdd.Add(NewNode);
+		}
 	}
 	
 	public function RenderAll():Void

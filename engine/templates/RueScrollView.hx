@@ -42,6 +42,7 @@ class RueScrollView extends RueView
 	
 	private function new() 
 	{
+		
 		super();
 		RueScrollSelf = this;
 	}
@@ -202,6 +203,7 @@ class RueScrollView extends RueView
 	{
 		if (!InPool)
 		{
+			_RenderTarget.Recycle();
 			super.Recycle();
 		}
 	}

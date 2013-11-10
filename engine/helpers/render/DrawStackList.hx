@@ -6,8 +6,7 @@ import engine.base.RueObject;
  * @author Jakegr
  */
 
-class DrawStackList 
-
+class DrawStackList extends RueObject
 {
 	static var Head:DrawStackList;
 	var Next:DrawStackList;
@@ -17,6 +16,7 @@ class DrawStackList
 	
 	private function new() 
 	{
+		super();
 		Self = this;
 	}
 	
@@ -32,6 +32,7 @@ class DrawStackList
 		{
 			Vessel = new DrawStackList();
 		}
+		Vessel.InPool = false;
 		
 		return Vessel;
 	}
@@ -69,14 +70,22 @@ class DrawStackList
 		}
 	}
 	
-	public function Recycle():Void
+	override public function Recycle():Void
+	{
+		if (!InPool)
+		{
+			while (_HeadNode != null)
+			{
+				_HeadNode.Remove();
+			}
+			super.Recycle();
+		}
+	}
+	
+	override public function OnRebirth():Void 
 	{
 		Next = Head;
 		Head = Self;
-		while (_HeadNode != null)
-		{
-			_HeadNode.Remove();
-		}
 	}
 }
 

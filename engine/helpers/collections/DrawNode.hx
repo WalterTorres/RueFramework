@@ -1,5 +1,6 @@
 package engine.helpers.collections;
 
+import engine.base.RueObject;
 import engine.systems.TileRenderSystem;
 
 /**
@@ -7,7 +8,7 @@ import engine.systems.TileRenderSystem;
  * @author Jakegr
  */
 
-class DrawNode 
+class DrawNode extends RueObject
 {
 	static var Head:DrawNode;
 	var Next:DrawNode;
@@ -23,6 +24,7 @@ class DrawNode
 	
 	private function new() 
 	{
+		super();
 		Self = this;
 	}
 	
@@ -38,6 +40,7 @@ class DrawNode
 		{
 			Vessel = new DrawNode();
 		}
+		Vessel.InPool = false;
 		
 		Vessel.PositionX = X;// Std.int(X);
 		Vessel.PositionY = Y;// Std.int(Y);
@@ -56,11 +59,19 @@ class DrawNode
 		if (NextNode != null)
 		{
 			NextNode.RecycleInChain();
+			NextNode = null;
 		}
-		
 	}
 	
-	public inline function Recycle():Void
+	override public function Recycle():Void
+	{
+		if (!InPool)
+		{
+			super.Recycle();
+		}
+	}
+	
+	override public function OnRebirth():Void 
 	{
 		Next = Head;
 		Head = Self;

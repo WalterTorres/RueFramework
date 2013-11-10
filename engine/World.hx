@@ -1,6 +1,7 @@
 package engine;
 
 import engine.base.EntityGroup;
+import engine.base.RueObject;
 import engine.components.PositionComponent;
 import engine.gameElements.CollisionResponses;
 import engine.helpers.RueMath;
@@ -13,6 +14,7 @@ import engine.helpers.Profiler;
 import engine.systems.MouseInputSystem;
 import engine.systems.UpdateSystem;
 import engine.templates.collections.RueCallbackList;
+import engine.templates.RueView;
 import flash.display.StageScaleMode;
 import flash.system.System;
 import motion.Actuate;
@@ -33,6 +35,9 @@ import flash.display.Shape;
 class World 
 {
 	public var Parent:Main;
+	
+	public static var Tracking:Int = 0;
+	
 	public static var Self:World;
 	public static var TheSpace:Space = new Space(Vec2.get(0, 0));
 	public static var Group:EntityGroup;
@@ -159,6 +164,7 @@ class World
 		
 		
 		Profiler.Report();
+		trace(Tracking);
 	}
 	
 	public function DeactivateLetterBoxes():Void

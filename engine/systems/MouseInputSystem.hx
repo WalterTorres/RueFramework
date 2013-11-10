@@ -196,7 +196,7 @@ class MouseInputSystem
 			if(!TouchOne.Dragged())
 			{
 				Clicked = true;
-				trace("didnt drag");
+				//trace("didnt drag");
 			}
 			Dragging = false;
 			
