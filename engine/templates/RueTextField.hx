@@ -137,7 +137,10 @@ class RueTextField extends RueObject implements IScreenGraphic
 	{
 		if(!InPool)
 		{
-			_Parent.removeChild(_Text);
+			if (_Parent != null)
+			{
+				_Parent.removeChild(_Text);
+			}
 			_Text = null;
 			_Parent = null;
 			super.Recycle();
