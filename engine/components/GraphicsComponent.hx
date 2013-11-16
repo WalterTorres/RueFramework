@@ -54,8 +54,11 @@ class GraphicsComponent
 		Vessel.ElapsedTime = 0;
 		Vessel.Rotation = 0;
 		Vessel.Alpha = 1.0;
-		Vessel.CurrentDelay = Vessel.Description.DS[0];
-		Vessel.MaxFrame = Vessel.Description.FrameCount;
+		if (Description != null)
+		{
+			Vessel.CurrentDelay = Vessel.Description.DS[0];
+			Vessel.MaxFrame = Vessel.Description.FrameCount;
+		}
 		Vessel.CameraRatioX = CamXRatio;
 		Vessel.CameraRatioY = CamYRatio;
 		Vessel.TargetCanvas = Target;
@@ -120,6 +123,7 @@ class GraphicsComponent
 	
 	public function RenderToScreen(X:Float, Y:Float):Void
 	{
+		if (Description == null) { return; }
 		#if debug
 		if (TargetCanvas.TheSheet != Description.TheTileSheet) { throw "Inconsistant Target canvas, The graphic component must belong to the same spritesheet as the canvas"; }
 		#end
@@ -129,6 +133,7 @@ class GraphicsComponent
 	
 	public function RenderToCamera(X:Float, Y:Float):Void
 	{
+		if (Description == null) { return; }
 		#if debug
 		if (TargetCanvas.TheSheet != Description.TheTileSheet) { throw "Inconsistant Target canvas, The graphic component must belong to the same spritesheet as the canvas"; }
 		#end

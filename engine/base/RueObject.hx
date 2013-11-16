@@ -22,7 +22,7 @@ class RueObject
 
 	private function new() 
 	{
-		World.Tracking++;
+		//World.Tracking++;
 		SelfRoot = this;
 		InPool = false;
 	}

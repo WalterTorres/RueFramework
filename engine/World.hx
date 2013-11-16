@@ -14,7 +14,6 @@ import engine.helpers.Profiler;
 import engine.systems.MouseInputSystem;
 import engine.systems.UpdateSystem;
 import engine.templates.collections.RueCallbackList;
-import engine.templates.RueView;
 import flash.display.StageScaleMode;
 import flash.system.System;
 import motion.Actuate;
@@ -164,7 +163,7 @@ class World
 		
 		
 		Profiler.Report();
-		//trace(Tracking);
+		trace(Tracking);
 	}
 	
 	public function DeactivateLetterBoxes():Void
@@ -245,8 +244,8 @@ class World
 			MouseInputSystem.XRate = 1 / ScaleX;
 			MouseInputSystem.YRate = 1 / ScaleY;
 			
-			MainSprite.x = -3;
-			MainSprite.y = -3;
+			MainSprite.x = 0;
+			MainSprite.y = 0;
 			
 			MouseInputSystem.LetterBoxOffsetX = 0; //since there is no letter boxes, bring all back to 0.
 			MouseInputSystem.LetterBoxOffsetY = 0;

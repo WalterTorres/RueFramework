@@ -8,6 +8,7 @@ import engine.components.PhysicsComponent;
 
 class RueMath 
 {
+	
 	public static function SecondsToDateFormat(Seconds:Int):String
 	{
 		var Hours:Int = Std.int(Seconds / 3600);

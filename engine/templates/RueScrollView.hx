@@ -41,7 +41,6 @@ class RueScrollView extends RueView
 	
 	private function new() 
 	{
-		
 		super();
 		RueScrollSelf = this;
 	}

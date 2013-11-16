@@ -52,6 +52,7 @@ class RueViewController
 		Vessel.Setup(Group);
 		Vessel._TheView = View;
 		Vessel._RenderTarget = RenderTarget;
+		Vessel._IsActivated = true;
 		return Vessel;
 	}
 	
@@ -89,15 +90,8 @@ class RueViewController
 					{
 						if (TouchedView._IsScrollable)
 						{
-							if (TouchedView._IsDragging)
-							{
-								TouchedView.Dragging();
-							}
-							else
-							{
-								TouchedView.StartDragging();
-								UniqueDragging = TouchedView;
-							}
+							TouchedView.StartDragging();
+							UniqueDragging = TouchedView;
 						}
 					}
 				}
@@ -108,6 +102,7 @@ class RueViewController
 			}
 			else 
 			{
+				
 				_TheView.CancelDrags();
 				UniqueDragging = null;
 			}
@@ -141,6 +136,10 @@ class RueViewController
 				_TheView = null;
 			}
 			super.Recycle();
+		}
+		else
+		{
+			trace("What!?");
 		}
 	}
 	

@@ -14,7 +14,6 @@ import engine.templates.collections.RueCallbackList;
 import engine.templates.collections.ScreenGraphicList;
 import engine.templates.collections.ViewElements;
 import flash.geom.Matrix;
-import sys.db.RecordInfos.RecordField;
 
 /**
  * ...
@@ -59,7 +58,6 @@ class RueView extends RueObject
 	
 	private function new() 
 	{
-		
 		super();
 		Self = this;
 	}
@@ -104,6 +102,8 @@ class RueView extends RueObject
 	{
 		_LastDragX = MouseInputSystem.X;
 		_LastDragY = MouseInputSystem.Y;
+		trace(_LastDragX);
+		trace(_LastDragY);
 		_IsDragging = true;
 	}
 	
@@ -183,7 +183,6 @@ class RueView extends RueObject
 	
 	public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView
 	{
-		if (!_TakesUserInput) { return null; }
 		if (_ClickRec != null)
 		{
 			_ClickRec.X = ParentX + _Position._X + _CurrentDragX;
@@ -193,6 +192,10 @@ class RueView extends RueObject
 				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X, ParentY + _Position._Y);
 				if ( Attempt == null) //if no children are being clicked then this one is being clicked
 				{
+					if (!_TakesUserInput)
+					{ 
+						return null;
+					}
 					return Self;
 				}
 				else
@@ -238,19 +241,25 @@ class RueView extends RueObject
 		}
 	}
 	
-	public function AddOnRecycleEvent(OnRes:Void->Void):RueNodeConnection
+	public function AddOnRecycleEvent(OnRes:Void->Void):RueCallback
 	{
-		return _OnRecycle.Add(RueCallback.Create(OnRes));
+		var Re:RueCallback = RueCallback.Create(OnRes);
+		_OnRecycle.Add(Re);
+		return Re;
 	}
 	
-	public function AddOnDrawEvent(OnDraw:Void->Void):RueNodeConnection
+	public function AddOnDrawEvent(OnDraw:Void->Void):RueCallback
 	{
-		return _OnDraw.Add(RueCallback.Create(OnDraw));
+		var Re:RueCallback = RueCallback.Create(OnDraw);
+		_OnDraw.Add(Re);
+		return Re;
 	}
 	
-	public function AddOnClickEvent(OnClick:Void->Void):RueNodeConnection
+	public function AddOnClickEvent(OnClick:Void->Void):RueCallback
 	{
-		return _OnClick.Add(RueCallback.Create(OnClick));
+		var Re:RueCallback = RueCallback.Create(OnClick);
+		_OnClick.Add(Re);
+		return Re;
 	}
 	
 	override public function Recycle():Void 
@@ -282,7 +291,6 @@ class RueView extends RueObject
 	
 	override public function OnRebirth():Void 
 	{
-		
 		Next = Head;
 		Head = Self;
 	}

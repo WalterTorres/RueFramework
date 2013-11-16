@@ -56,12 +56,12 @@ class Profiler
 		return TimersCollection.length - 1;
 	}
 	
-	public function HideFPS():Void
+	public static function HideFPS():Void
 	{
 		RenderTarget.removeChild(Text);
 	}
 	
-	public function ShowFPS():Void
+	public static function ShowFPS():Void
 	{
 		RenderTarget.addChild(Text);
 	}

@@ -2,6 +2,7 @@ package engine.templates.viewHelper;
 
 import engine.base.Entity;
 import engine.base.EntityGroup;
+import engine.base.RueObject.RueNodeConnection;
 import engine.helpers.Profiler;
 import engine.systems.MouseInputSystem;
 import engine.systems.SoundSystem;
@@ -35,6 +36,8 @@ class ViewManipulator
 	public var _CurrentlyDoing:MotionStep;
 	var _Target:RueView;
 	var _OnAllSequencesFinished:RueCallbackList;
+	var _RecycleConnection:RueCallback;
+	var _TargetWasRecycled:Bool;
 	
 	private function new() 
 	{
@@ -51,7 +54,8 @@ class ViewManipulator
 		Vessel._OnAllSequencesFinished = RueCallbackList.Create();
 		Vessel._CurrentlyDoing = null;
 		Vessel._Target = Target;
-		Target.AddOnRecycleEvent(Vessel.TargetWasRecycled);
+		Vessel._TargetWasRecycled = false;
+		Vessel._RecycleConnection = Target.AddOnRecycleEvent(Vessel.TargetWasRecycled);
 		
 		return Vessel;
 	}
@@ -81,6 +85,7 @@ class ViewManipulator
 	private function TargetWasRecycled():Void
 	{
 		//recycle this entity and let go of the target if the target was recycled.
+		_TargetWasRecycled = true;
 		Recycle();
 	}
 	
@@ -93,8 +98,14 @@ class ViewManipulator
 				_CurrentlyDoing.KillButton();
 			}
 			
+			if (!_TargetWasRecycled)
+			{
+				trace("removing the node");
+				_RecycleConnection.Recycle();
+			}
+			
 			_OnAllSequencesFinished.TriggerAll();
-			_OnAllSequencesFinished.RecycleAll();
+			//_OnAllSequencesFinished.RecycleAll();
 			_OnAllSequencesFinished.Recycle();
 			super.Recycle();
 		}

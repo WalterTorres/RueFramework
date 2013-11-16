@@ -17,6 +17,7 @@ class RueCallback extends RueObject
 	
 	private function new() 
 	{
+		World.Tracking++;
 		super();
 		Self = this;
 	}
@@ -36,12 +37,14 @@ class RueCallback extends RueObject
 	{
 		if(!InPool)
 		{
+			trace("Recycle call back");
 			super.Recycle();
 		}
 	}
 	
 	override public function OnRebirth():Void
 	{
+		trace("Re added");
 		Next = Head;
 		Head = Self;
 	}

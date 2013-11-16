@@ -74,6 +74,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 		}
 
 		_Text = new TextField();
+		_Text.multiline = true;
 		_Text.mouseEnabled = false;
 		_Text.selectable = false;
 		_Text.embedFonts = true;
@@ -112,7 +113,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Text.selectable = false;
 		_Text.embedFonts = true;
 		_Text.width = ToThis.length * (_Size+1);
-		_Text.height = (_Size*1.5);
+		_Text.height = (_Size*2.5);
 		_Text.text = ToThis;
 		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size, _Color );
 		_Text.setTextFormat(_TextForm);

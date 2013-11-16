@@ -1,6 +1,7 @@
 package engine.templates.viewHelper;
 import engine.base.RueObject;
 import engine.gameElements.interfaces.IMotionStep;
+import engine.World;
 
 /**
  * ...
