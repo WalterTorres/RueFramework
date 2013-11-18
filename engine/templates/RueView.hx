@@ -19,7 +19,7 @@ import flash.geom.Matrix;
  * ...
  * @author Jakegr
  */
-class RueView extends RueObject
+class RueView extends MouseListener
 {
 	static var Head:RueView;
 	var Self:RueView;
@@ -27,9 +27,7 @@ class RueView extends RueObject
 	
 	var _DrawChildren:ViewElements;
 	public var _Graphics:ScreenGraphicList;
-	
 	var _CameraBound:Bool;
-	
 	public var _ParentView:RueView;
 	public var _Position:PositionComponent;
 	public var _IsHidden:Bool;
@@ -38,23 +36,19 @@ class RueView extends RueObject
 	public var _OnDraw:RueCallbackList;
 	public var _OnRecycle:RueCallbackList;
 	public var _IsScrollable:Bool;
-	
 	var _LastDragX:Float; //the position of the last delta for the drag
 	var _LastDragY:Float;
-	
+	var _ParentConnection:RueNodeConnection;
 	public var _MaxDragX:Float;
 	public var _MaxDragY:Float;
-	
 	public var _CurrentDragX:Float;
 	public var _CurrentDragY:Float;
-	
 	public var _IsDragging:Bool;
 	public var _Rotation:Float;
-	
 	public var _ElasticSpeedX:Float;
 	public var _ElasticSpeedY:Float;
-	
 	public var _TakesUserInput:Bool;
+	public var _InputLayer:Int; //input layer corresponds to what layer the view is at.
 	
 	private function new() 
 	{
@@ -75,6 +69,7 @@ class RueView extends RueObject
 			Vessel._ClickRec = RueRectangle.Create(Position._X, Position._Y, Width, Height);
 		}
 		Vessel._ParentView = null;
+		Vessel._ParentConnection = null;
 		Vessel._IsHidden = false;
 		Vessel._DrawChildren = ViewElements.Create();
 		Vessel._Graphics = ScreenGraphicList.Create();
@@ -92,10 +87,15 @@ class RueView extends RueObject
 		Vessel._Rotation = 0;
 		Vessel._CameraBound = false;
 		Vessel._TakesUserInput = true;
-		
-		
-		
+		Vessel._InputLayer = 0;
+		Vessel.AddToMouseListener(0);
 		return Vessel;
+	}
+	
+	public function SetInputPriority(LayerInput:Int):Void
+	{
+		RemoveFromMouseListener();
+		AddToMouseListener(LayerInput);
 	}
 	
 	public function StartDragging():Void
@@ -181,6 +181,22 @@ class RueView extends RueObject
 		_OnDraw.TriggerAll();
 	}
 	
+	public function UpdateClickRec(ParentX:Float, ParentY:Float):Void
+	{
+		var NewX:Float = ParentX + _Position._X + _CurrentDragX;
+		var NewY:Float = ParentY + _Position._Y + _CurrentDragY;
+		if (_ClickRec != null)
+		{
+			_ClickRec.X = NewX;
+			_ClickRec.Y = NewY;
+		}
+		
+		_DrawChildren.UpdateClickRecPosition(NewX, NewY);
+		
+	}
+	
+	
+	
 	public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView
 	{
 		if (_ClickRec != null)
@@ -203,9 +219,21 @@ class RueView extends RueObject
 					return Attempt;
 				}
 			}
-			
 		}
 		return null;
+	}
+	
+	override public function CheckInput(X:Float, Y:Float):Bool 
+	{
+		if (_ClickRec != null)
+		{
+			if (_ClickRec.ContainsFPoint(X, Y))
+			{
+				_OnClick.TriggerAll();
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public function AddChildView(Child:RueView):RueView
@@ -216,7 +244,9 @@ class RueView extends RueObject
 		}
 		
 		Child._ParentView = Self;
-		_DrawChildren.Add(Child);
+		Child.SetInputPriority(_InputLayer + 1);
+		var ChildToParentConnection:RueNodeConnection = _DrawChildren.Add(Child);
+		Child._ParentConnection = ChildToParentConnection;
 		
 		return Self;
 	}
@@ -235,10 +265,8 @@ class RueView extends RueObject
 	
 	public function RemoveFromParentView():Void
 	{
-		while (_RueHeadNode != null)
-		{
-			_RueHeadNode.Remove();
-		}
+		_ParentConnection.Remove();
+		_ParentConnection = null;
 	}
 	
 	public function AddOnRecycleEvent(OnRes:Void->Void):RueCallback

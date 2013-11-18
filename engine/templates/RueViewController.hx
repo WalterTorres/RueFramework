@@ -72,16 +72,18 @@ class RueViewController
 		if (!_IsActivated) { return; }
 		if (_TheView != null)
 		{
-			if (MouseInputSystem.Clicked)
-			{
-				_TheView.CancelDrags();//in case something was being dragged
-				var TouchedView:RueView = _TheView.CheckScreenInput(MouseInputSystem.X, MouseInputSystem.Y, 0, 0);
-				if (TouchedView != null) //if something was indeed touched
-				{
-					TouchedView._OnClick.TriggerAll();
-				}
-			}
-			else if (MouseInputSystem.Dragging)
+			_TheView.UpdateClickRec(0, 0);
+			//if (MouseInputSystem.Clicked)
+			//{
+			//	_TheView.CancelDrags();//in case something was being dragged
+			//	var TouchedView:RueView = _TheView.CheckScreenInput(MouseInputSystem.X, MouseInputSystem.Y, 0, 0);
+			//	if (TouchedView != null) //if something was indeed touched
+			//	{
+			//		TouchedView._OnClick.TriggerAll();
+			//	}
+			//}
+			//else 
+			if (MouseInputSystem.Dragging)
 			{
 				if (UniqueDragging == null)
 				{
@@ -136,10 +138,6 @@ class RueViewController
 				_TheView = null;
 			}
 			super.Recycle();
-		}
-		else
-		{
-			trace("What!?");
 		}
 	}
 	

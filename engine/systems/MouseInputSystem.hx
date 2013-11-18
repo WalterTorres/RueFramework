@@ -5,6 +5,7 @@ import engine.helpers.render.DrawStack;
 import engine.helpers.roxstudio.haxe.gesture.RoxGestureEvent;
 import engine.helpers.RueMath;
 import engine.systems.touches.RueTouch;
+import engine.templates.collections.MouseListenerList;
 import engine.World;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -66,8 +67,15 @@ class MouseInputSystem
 	
 	private static var theStage:Main;
 	
+	public static var MouseListeners:Array<MouseListenerList> = new Array<MouseListenerList>();
+	
 	public static function Init(TheStage:Main):Void
 	{
+		for (i in 0...20)
+		{
+			MouseListeners[i] = MouseListenerList.Create();
+		}
+		
 		if (Accelerometer.isSupported)
 		{
 			Accelerometersupported = true;
@@ -190,6 +198,15 @@ class MouseInputSystem
 		if (!Dragging)
 		{
 			Clicked = true;
+			//check all the listeners and notify the one that got touched.
+			for (i in 0...20)
+			{
+				var current:Int = 19 - i;
+				if (MouseListeners[current].CheckInput(X, Y))
+				{
+					break;
+				}
+			}
 		}
 		else
 		{

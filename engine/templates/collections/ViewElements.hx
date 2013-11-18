@@ -68,6 +68,16 @@ class ViewElements
 		}
 	}
 	
+	public function UpdateClickRecPosition(X:Float, Y:Float):Void
+	{
+		var Current:ViewElementsNode = _HeadNode;
+		while (Current != null)
+		{
+			Current._Target.UpdateClickRec(X, Y);
+			Current = Current._NextNode;
+		}
+	}
+	
 	public function CheckInput(X:Float, Y:Float, ParentX:Float, ParentY:Float):RueView
 	{
 		var Current:ViewElementsNode = _HeadNode;

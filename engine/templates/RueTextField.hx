@@ -20,6 +20,8 @@ class RueTextField extends RueObject implements IScreenGraphic
 	
 	var _Parent:Sprite;
 	public var _Text:TextField;
+	public var _DropShadow:TextField;
+	public var _HasDropShadow:Bool;
 	var _Font:Font;
 	public var _X:Float;
 	public var _Y:Float;
@@ -33,7 +35,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 		RueTextFieldSelf = this;
 	}
 	
-	public static function Create(X:Float, Y:Float, Size:Int, TheFont:Font, Editable:Bool = false, Selectable:Bool = false, color:UInt = 0x5a1516):RueTextField
+	public static function Create(X:Float, Y:Float, Size:Int, TheFont:Font, Editable:Bool = false, Selectable:Bool = false, color:UInt = 0x5a1516, HasDropShadow:Bool = false):RueTextField
 	{
 		var Vessel:RueTextField;
 		if(RueTextFieldHead != null) { Vessel = RueTextFieldHead; RueTextFieldHead = RueTextFieldHead.RueTextFieldNext; }
@@ -42,6 +44,7 @@ class RueTextField extends RueObject implements IScreenGraphic
 		
 		Vessel._Font = TheFont;
 
+		Vessel._HasDropShadow = HasDropShadow;
 		Vessel._X = X;
 		Vessel._Y = Y;
 		Vessel._Size = Size;
@@ -83,12 +86,44 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Text.text = ToThis;
 		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size, _Color );
 		_Text.setTextFormat(_TextForm);
-		if (_Parent != null)
+	
+		_Text.x = X;
+		_Text.y = Y;
+		
+		if (_HasDropShadow)
+		{
+
+			if (_Text != null)
+			{
+				X = _Text.x;
+				Y = _Text.y;	
+			}
+			if (_Parent != null)
+			{
+				_Parent.removeChild(_DropShadow); 
+			}
+	
+			_DropShadow = new TextField();
+			_DropShadow.mouseEnabled = false;
+			_DropShadow.selectable = false;
+			_DropShadow.embedFonts = true;
+			_DropShadow.width = ToThis.length * (_Size+1);
+			_DropShadow.height = (_Size*2.5);
+			_DropShadow.text = ToThis;
+			var _TextFormShadow:TextFormat = new TextFormat(_Font.fontName, _Size, 0x000000 );
+			_DropShadow.setTextFormat(_TextFormShadow);
+			if (_Parent != null)
+			{
+				_Parent.addChild(_DropShadow); 
+			}
+			_DropShadow.x = X+2;
+			_DropShadow.y = Y+2;
+		}
+		
+			if (_Parent != null)
 		{
 			_Parent.addChild(_Text); 
 		}
-		_Text.x = X;
-		_Text.y = Y;
 	}
 	
 	public function ChangeColor(ToThisColor:UInt):Void
@@ -117,12 +152,45 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Text.text = ToThis;
 		var _TextForm:TextFormat = new TextFormat(_Font.fontName, _Size, _Color );
 		_Text.setTextFormat(_TextForm);
+		
+		_Text.x = X;
+		_Text.y = Y;
+		
+		if (_HasDropShadow)
+		{
+			_Color = ToThisColor;
+			
+			if (_Text != null)
+			{
+				X = _Text.x;
+				Y = _Text.y;	
+			}
+			if (_Parent != null)
+			{
+				_Parent.removeChild(_DropShadow); 
+			}
+	
+			_DropShadow = new TextField();
+			_DropShadow.mouseEnabled = false;
+			_DropShadow.selectable = false;
+			_DropShadow.embedFonts = true;
+			_DropShadow.width = ToThis.length * (_Size+1);
+			_DropShadow.height = (_Size*2.5);
+			_DropShadow.text = ToThis;
+			var _TextFormShadow:TextFormat = new TextFormat(_Font.fontName, _Size, 0x000000 );
+			_DropShadow.setTextFormat(_TextFormShadow);
+			if (_Parent != null)
+			{
+				_Parent.addChild(_DropShadow); 
+			}
+			_DropShadow.x = X+2;
+			_DropShadow.y = Y+2;
+		}
+		
 		if (_Parent != null)
 		{
 			_Parent.addChild(_Text); 
 		}
-		_Text.x = X;
-		_Text.y = Y;
 	}
 	
 	public function CenterTo(X:Float):Void
@@ -135,6 +203,13 @@ class RueTextField extends RueObject implements IScreenGraphic
 		_Y = Y - _Text.textHeight / 2;
 	}
 	
+	public function LeftAlignAt(X:Float):Void
+	{
+		_X = X - _Text.textWidth;
+	}
+	
+	
+	
 	override public function Recycle():Void
 	{
 		if(!InPool)
@@ -142,9 +217,14 @@ class RueTextField extends RueObject implements IScreenGraphic
 			if (_Parent != null)
 			{
 				_Parent.removeChild(_Text);
+				if (_HasDropShadow)
+				{
+					_Parent.removeChild(_DropShadow);
+				}
 			}
 			_Text = null;
 			_Parent = null;
+			_DropShadow = null;
 			super.Recycle();
 		}
 	}
@@ -162,18 +242,33 @@ class RueTextField extends RueObject implements IScreenGraphic
 		if (_Parent == null)
 		{
 			_Parent = RenderTarget.Target;
+				if (_HasDropShadow)
+			{
+				_Parent.addChild(_DropShadow);
+			}
 			_Parent.addChild(_Text);
+		
 		}
 		else
 		if (RenderTarget.Target != _Parent)
 		{
+			if (_HasDropShadow)
+			{
+				RenderTarget.Target.addChild(_DropShadow);
+			}
 			_Parent.removeChild(_Text);
 			RenderTarget.Target.addChild(_Text);
 			_Parent = RenderTarget.Target;
+			
 		}
 		//textfields are always camera bound
 		_Text.x = ParentX + _X;
 		_Text.y = ParentY + _Y;
+		if (_HasDropShadow)
+		{
+			_DropShadow.x = ParentX + _X + 2;
+			_DropShadow.y = ParentY + _Y + 2;
+		}
 	}
 	
 	public function SetRotation(Rot:Float):Void 
@@ -184,6 +279,10 @@ class RueTextField extends RueObject implements IScreenGraphic
 	public function SetAlpha(Alpha:Float):Void 
 	{
 		_Text.alpha = Alpha;
+		if (_HasDropShadow)
+		{
+			_DropShadow.alpha = Alpha;
+		}
 	}
 		
 	

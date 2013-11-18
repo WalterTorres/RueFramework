@@ -100,7 +100,7 @@ class ViewManipulator
 			
 			if (!_TargetWasRecycled)
 			{
-				trace("removing the node");
+				//trace("removing the node");
 				_RecycleConnection.Recycle();
 			}
 			
