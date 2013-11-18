@@ -62,6 +62,11 @@ class RueView extends MouseListener
 		if (Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new RueView(); }
 		Vessel.InPool = false;
+		Vessel.InitView(Vessel, Position, Width, Height);
+		return Vessel;
+	}
+	private function InitView(Vessel:RueView, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):Void
+	{
 		if (Position == null) { Position = PositionComponent.Create(); } 
 		Vessel._Position = Position;
 		if (Width != 0 && Height != 0)
@@ -89,7 +94,6 @@ class RueView extends MouseListener
 		Vessel._TakesUserInput = true;
 		Vessel._InputLayer = 0;
 		Vessel.AddToMouseListener(0);
-		return Vessel;
 	}
 	
 	public function SetInputPriority(LayerInput:Int):Void
