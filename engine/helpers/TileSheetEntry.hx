@@ -35,6 +35,7 @@ class TileSheetEntry
 	private static var Flags:Int = Tilesheet.TILE_ROTATION;
 	public var TheSheet:Tilesheet;
 	public var Offsets:Array<FloatTupe>;
+	public var FileName:String;
 	
 	/**
 	 * Create invokes the internal constructor to create an spritesheet description, this class will save all the information 
@@ -61,6 +62,7 @@ class TileSheetEntry
 
 	private function new(File:String, BitmapPath:String, JsonPath:String) 
 	{
+		FileName = File;
 		var Data:BitmapData = Assets.getBitmapData(BitmapPath + File + ".png");
 		TheSheet = new Tilesheet(Data);
 

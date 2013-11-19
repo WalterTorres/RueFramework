@@ -16,9 +16,6 @@ class RueRectangle extends RueObject
 	public var Width:Float;
 	public var Height:Float;
 	
-	//public var HalfWidth:Float;
-	//public var HalfHeight:Float;
-	
 	public var X:Float;
 	public var Y:Float;
 	
