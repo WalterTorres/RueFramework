@@ -1,0 +1,92 @@
+package $(Package);
+
+import engine.base.Entity;
+import engine.base.EntityGroup;
+import engine.helpers.Profiler;
+import engine.systems.MouseInputSystem;
+import engine.systems.SoundSystem;
+import engine.components.PhysicsComponent;
+import engine.components.GraphicsComponent;
+import engine.World;
+import nape.phys.BodyType;
+import engine.helpers.TileSheetEntry;
+import engine.helpers.render.DrawStack;
+import engine.templates.RueView;
+import engine.templates.RueViewController;
+import flash.display.Sprite;
+import engine.components.PositionComponent;
+
+/**
+$(CBI)* ...
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+class $(FileName) $(CSLB) extends Entity
+{
+	static var $(FileName)Head:$(FileName);
+	var $(FileName)Next:$(FileName);
+	var $(FileName)Self:$(FileName);
+	
+	var _$(FileName)Group:EntityGroup;
+	var _$(FileName)RT:DrawStack;
+	var _$(FileName)View:RueView;
+	var _$(FileName)Controller:RueViewController;
+	
+	private function new() 
+	{
+		super();
+		$(FileName)Self = this;
+	}
+	
+	public static function Create(Group:EntityGroup, SSData:TileSheetEntry, Target:Sprite):$(FileName)
+	{
+		var Vessel:$(FileName);
+		if($(FileName)Head != null) { Vessel = $(FileName)Head; $(FileName)Head = $(FileName)Head.$(FileName)Next; }
+		else { Vessel = new $(FileName)(); }
+		Vessel.Setup(Group);
+		Vessel.Init(SSData, Target);
+		return Vessel;
+	}
+	
+	private function Init(SSData:TileSheetEntry, Target:Sprite):Void
+	{
+		_$(FileName)Group = EntityGroup.Create();
+		_$(FileName)RT = DrawStack.Create(SSData, Target, 3);
+		_$(FileName)Controller = RueViewController.Create(_$(FileName)Group, _$(FileName)RT);
+		_$(FileName)View = RueView.CreateWithController(_$(FileName)Controller, PositionComponent.Create(0,0), 0,0); //Change position and dimension of the view here.
+	}
+	
+	override public function PreUpdate():Void
+	{
+		_$(FileName)Group.PreUpdate();
+	}
+	
+	override public function Update():Void
+	{
+		_$(FileName)Group.Update();
+	}
+	
+	override public function Draw():Void
+	{
+		_$(FileName)Group.Draw();
+	}
+	
+	override public function Recycle():Void
+	{
+		if(!InPool)
+		{
+			_$(FileName)Group.Recycle();
+			_$(FileName)RT.Recycle();
+			super.Recycle();
+		}
+		
+	}
+	
+	override public function OnRebirth():Void
+	{
+		$(FileName)Next = $(FileName)Head;
+		$(FileName)Head = $(FileName)Self;
+	}
+		
+	
+}

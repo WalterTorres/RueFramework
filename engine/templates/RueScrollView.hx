@@ -39,6 +39,9 @@ class RueScrollView extends RueView
 	
 	var _RenderTarget:DrawStack;
 	
+	var _MomemtumX:Float;
+	var _MomemtumY:Float;
+	
 	private function new() 
 	{
 		super();
@@ -58,6 +61,8 @@ class RueScrollView extends RueView
 			Vessel._ClickRec = RueRectangle.Create(Position._X, Position._Y, Width, Height);
 		}
 		
+		Vessel._MomemtumX = 0;
+		Vessel._MomemtumY = 0;
 		Vessel._MaxX = MaxX;
 		Vessel._MaxY = MaxY;
 		Vessel._MinX = MinX;
@@ -89,6 +94,13 @@ class RueScrollView extends RueView
 		return Vessel;
 	}
 	
+	override public function StartDragging():Void 
+	{
+		_MomemtumX = 0;
+		_MomemtumY = 0;
+		super.StartDragging();
+	}
+	
 	override public function Dragging():Void 
 	{
 		if (!_IsDragging) { return; }
@@ -96,26 +108,8 @@ class RueScrollView extends RueView
 		var DeltaX:Float = MouseInputSystem.X - _LastDragX;
 		var DeltaY:Float = MouseInputSystem.Y - _LastDragY;
 		
-		_CurrentDragX += DeltaX;
-		_CurrentDragY += DeltaY;
-		
-		if (_CurrentDragX < _MinX)
-		{
-			_CurrentDragX = _MinX;
-		}
-		else if (_CurrentDragX > _MaxX)
-		{
-			_CurrentDragX = _MaxX;
-		}
-		
-		if (_CurrentDragY < _MinY)
-		{
-			_CurrentDragY = _MinY;
-		}
-		else if (_CurrentDragY > _MaxY)
-		{
-			_CurrentDragY = _MaxY;
-		}
+		_MomemtumX = DeltaX;
+		_MomemtumY = DeltaY;
 		
 		_LastDragX = MouseInputSystem.X;
 		_LastDragY = MouseInputSystem.Y;
@@ -123,6 +117,53 @@ class RueScrollView extends RueView
 	
 	override public function Render(ParentX:Float, ParentY:Float, Canvas:DrawStack):Void 
 	{
+		//momemtum check
+		_CurrentDragX += _MomemtumX;
+		_CurrentDragY += _MomemtumY;
+		if (_CurrentDragX < _MinX)
+		{
+			_CurrentDragX = _MinX;
+			_MomemtumX = 0;
+		}
+		else if (_CurrentDragX > _MaxX)
+		{
+			_CurrentDragX = _MaxX;
+			_MomemtumX = 0;
+		}
+		
+		if (_CurrentDragY < _MinY)
+		{
+			_CurrentDragY = _MinY;
+			_MomemtumY = 0;
+		}
+		else if (_CurrentDragY > _MaxY)
+		{
+			_CurrentDragY = _MaxY;
+			_MomemtumY = 0;
+		}
+		if (_MomemtumX != 0)
+		{
+			var DireX:Int = RueMath.AbsoluteDirection(_MomemtumX);
+			_MomemtumX -= Profiler.ElapsedTime*_MomemtumX*2;
+			if (DireX != RueMath.AbsoluteDirection(_MomemtumX))
+			{
+				_MomemtumX = 0;
+			}
+		}
+		
+		if (_MomemtumY != 0)
+		{
+			var DireY:Int = RueMath.AbsoluteDirection(_MomemtumY);
+			_MomemtumY -= Profiler.ElapsedTime *_MomemtumY*2;
+			if (DireY != RueMath.AbsoluteDirection(_MomemtumY))
+			{
+				_MomemtumY = 0;
+			}
+		}
+		
+		trace(_MomemtumY);
+		
+		//render portion
 		if (_IsHidden) { return; }
 		_OnDraw.TriggerAll();
 		

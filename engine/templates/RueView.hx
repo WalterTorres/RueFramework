@@ -55,6 +55,28 @@ class RueView extends MouseListener
 		super();
 		Self = this;
 	}
+	//{ FACTORY METHODS
+	public static function CreateWithController(Controller:RueViewController, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueView
+	{
+		var Vessel:RueView;
+		if (Head != null) { Vessel = Head; Head = Head.Next; }
+		else { Vessel = new RueView(); }
+		Vessel.InPool = false;
+		Vessel.InitView(Vessel, Position, Width, Height);
+		Controller.SetView(Vessel);
+		return Vessel;
+	}
+	
+	public static function CreateWithParent(Parent:RueView, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueView
+	{
+		var Vessel:RueView;
+		if (Head != null) { Vessel = Head; Head = Head.Next; }
+		else { Vessel = new RueView(); }
+		Vessel.InPool = false;
+		Vessel.InitView(Vessel, Position, Width, Height);
+		Parent.AddChildView(Vessel);
+		return Vessel;
+	}
 
 	public static function Create(Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueView
 	{
@@ -65,6 +87,7 @@ class RueView extends MouseListener
 		Vessel.InitView(Vessel, Position, Width, Height);
 		return Vessel;
 	}
+	//}
 	private function InitView(Vessel:RueView, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):Void
 	{
 		if (Position == null) { Position = PositionComponent.Create(); } 
@@ -100,6 +123,7 @@ class RueView extends MouseListener
 	{
 		RemoveFromMouseListener();
 		AddToMouseListener(LayerInput);
+		_InputLayer = LayerInput;
 	}
 	
 	public function StartDragging():Void
@@ -194,13 +218,17 @@ class RueView extends MouseListener
 			_ClickRec.X = NewX;
 			_ClickRec.Y = NewY;
 		}
-		
 		_DrawChildren.UpdateClickRecPosition(NewX, NewY);
-		
 	}
-	
-	
-	
+
+	/**
+	 * This method is used internally for the Dragging checking.
+	 * @param	ClickX
+	 * @param	ClickY
+	 * @param	ParentX
+	 * @param	ParentY
+	 * @return
+	 */
 	public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView
 	{
 		if (_ClickRec != null)
@@ -227,6 +255,12 @@ class RueView extends MouseListener
 		return null;
 	}
 	
+	/**
+	 * This method gets called when the user makes a tap (or mouse click), all views are subcribed to the mouse listeners.
+	 * @param	X
+	 * @param	Y
+	 * @return
+	 */
 	override public function CheckInput(X:Float, Y:Float):Bool 
 	{
 		if (_ClickRec != null)

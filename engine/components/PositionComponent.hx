@@ -30,7 +30,7 @@ class PositionComponent extends RueObject
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new PositionComponent(); }
 		Vessel.InPool = false;
-		Vessel.Adjust(X, Y);
+		Vessel.SetXY(X, Y);
 		
 		return Vessel;
 	}
@@ -41,7 +41,7 @@ class PositionComponent extends RueObject
 		_Y += Y;
 	}
 	
-	public inline function Adjust(X:Float, Y:Float):Void //call adjust in the pre update phase.
+	public inline function SetXY(X:Float, Y:Float):Void //call adjust in the pre update phase.
 	{
 		_X = X;
 		_Y = Y;

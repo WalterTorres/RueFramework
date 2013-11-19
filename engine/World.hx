@@ -100,7 +100,7 @@ class World
 		BackgroundRenderTarget = new Sprite();
 		BackgroundRenderTarget.x = 0;
 		BackgroundRenderTarget.y = 0;
-		BackgroundRenderTarget.scaleX = 1;
+		BackgroundRenderTarget.scaleX = 1; 
 		BackgroundRenderTarget.scaleY = 1;
 		
 		MainSprite.addChild(BackgroundRenderTarget); //the one to draw first

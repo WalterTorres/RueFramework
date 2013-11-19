@@ -5,6 +5,7 @@ import engine.helpers.render.DrawStack;
 import flash.display.Sprite;
 import flash.text.Font;
 import flash.text.TextField;
+import flash.text.TextFieldType;
 import flash.text.TextFormat;
 
 /**
@@ -27,6 +28,8 @@ class RueTextField extends RueObject implements IScreenGraphic
 	public var _Y:Float;
 	var _Size:Int;
 	var _Color:UInt;
+	var _Selectable:Bool;
+	var _Editable:Bool;
 	
 	private function new() 
 	{
@@ -43,6 +46,8 @@ class RueTextField extends RueObject implements IScreenGraphic
 		Vessel.InPool = false;
 		
 		Vessel._Font = TheFont;
+		Vessel._Selectable = Selectable;
+		Vessel._Editable = Editable;
 
 		Vessel._HasDropShadow = HasDropShadow;
 		Vessel._X = X;
@@ -78,8 +83,12 @@ class RueTextField extends RueObject implements IScreenGraphic
 
 		_Text = new TextField();
 		_Text.multiline = true;
-		_Text.mouseEnabled = false;
-		_Text.selectable = false;
+		_Text.mouseEnabled = _Editable;
+		_Text.selectable = _Selectable;
+		if (_Editable)
+		{
+			_Text.type = TextFieldType.INPUT;
+		}
 		_Text.embedFonts = true;
 		_Text.width = ToThis.length * (_Size+1);
 		_Text.height = (_Size*1.5);
@@ -144,8 +153,12 @@ class RueTextField extends RueObject implements IScreenGraphic
 		}
 
 		_Text = new TextField();
-		_Text.mouseEnabled = false;
-		_Text.selectable = false;
+		_Text.mouseEnabled = _Editable;
+		_Text.selectable = _Selectable;
+		if (_Editable)
+		{
+			_Text.type = TextFieldType.INPUT;
+		}
 		_Text.embedFonts = true;
 		_Text.width = ToThis.length * (_Size+1);
 		_Text.height = (_Size*2.5);
@@ -261,11 +274,19 @@ class RueTextField extends RueObject implements IScreenGraphic
 			_Parent = RenderTarget.Target;
 			
 		}
+	
+		
 		//textfields are always camera bound
 		_Text.x = ParentX + _X;
 		_Text.y = ParentY + _Y;
 		if (_HasDropShadow)
 		{
+			if (_Text.text != _DropShadow.text)
+			{
+				var Text:String = _Text.text;
+				_Text.text = "";
+				ChangeTextTo(Text);
+			}
 			_DropShadow.x = ParentX + _X + 2;
 			_DropShadow.y = ParentY + _Y + 2;
 		}
