@@ -77,10 +77,6 @@ class RueCallbackList extends RueObject
 		if (!InPool)
 		{
 			RecycleAll();
-			//while (_HeadNode != null)
-			//{
-			//	_HeadNode.Remove();
-			//}
 			super.Recycle();
 		}
 	}

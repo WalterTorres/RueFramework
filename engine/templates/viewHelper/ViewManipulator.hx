@@ -38,6 +38,7 @@ class ViewManipulator
 	var _OnAllSequencesFinished:RueCallbackList;
 	var _RecycleConnection:RueCallback;
 	var _TargetWasRecycled:Bool;
+	var _AlreadyGotRidOfConnection:Bool;
 	
 	private function new() 
 	{
@@ -56,6 +57,7 @@ class ViewManipulator
 		Vessel._Target = Target;
 		Vessel._TargetWasRecycled = false;
 		Vessel._RecycleConnection = Target.AddOnRecycleEvent(Vessel.TargetWasRecycled);
+		Vessel._AlreadyGotRidOfConnection = false;
 		
 		return Vessel;
 	}
@@ -84,9 +86,12 @@ class ViewManipulator
 	
 	private function TargetWasRecycled():Void
 	{
-		//recycle this entity and let go of the target if the target was recycled.
-		_TargetWasRecycled = true;
-		Recycle();
+		if (!_AlreadyGotRidOfConnection) //this prevents when the owner of the view listens to the end step of this manipulation and recycles itself then, causing a stack overflow.
+		{
+			//recycle this entity and let go of the target if the target was recycled.
+			_TargetWasRecycled = true;
+			Recycle();
+		}
 	}
 	
 	override public function Recycle():Void
@@ -103,6 +108,7 @@ class ViewManipulator
 				//trace("removing the node");
 				_RecycleConnection.Recycle();
 			}
+			_AlreadyGotRidOfConnection = true;
 			
 			_OnAllSequencesFinished.TriggerAll();
 			//_OnAllSequencesFinished.RecycleAll();

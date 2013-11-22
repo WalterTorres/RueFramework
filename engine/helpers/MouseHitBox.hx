@@ -22,13 +22,15 @@ class MouseHitBox extends MouseListener
 	public var OffsetX:Float;
 	public var OffsetY:Float;
 	
+	public var _OnClicked:Void->Void;
+	
 	private function new() 
 	{
 		super();
 		MouseHitBoxSelf = this;
 	}
 	
-	public static function Create(ListenLayer:Int, X:Float, Y:Float, Width:Float, Height:Float, OffsetX:Float = 0, OffsetY:Float = 0):MouseHitBox
+	public static function Create(ListenLayer:Int, OnClicked:Void->Void, X:Float, Y:Float, Width:Float, Height:Float, OffsetX:Float = 0, OffsetY:Float = 0):MouseHitBox
 	{
 		var Vessel:MouseHitBox;
 		if(MouseHitBoxHead != null) { Vessel = MouseHitBoxHead; MouseHitBoxHead = MouseHitBoxHead.MouseHitBoxNext; }
@@ -40,6 +42,7 @@ class MouseHitBox extends MouseListener
 		Vessel.OffsetY = OffsetY;
 		Vessel.Width = Width;
 		Vessel.Height = Height;
+		Vessel._OnClicked = OnClicked;
 		Vessel.AddToMouseListener(ListenLayer);
 		
 		return Vessel;
@@ -61,7 +64,13 @@ class MouseHitBox extends MouseListener
 	
 	override public function CheckInput(X:Float, Y:Float):Bool 
 	{
-		 return ((((_X <= X) && (X < _X + Width)) && (_Y <= Y)) && (Y < _Y + Height));
+		if ((((_X <= X) && (X < _X + Width)) && (_Y <= Y)) && (Y < _Y + Height))
+		{
+			_OnClicked();
+			return true;
+		}
+		
+		return false;
 	}
 	
 	override public function OnRebirth():Void

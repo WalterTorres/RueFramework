@@ -13,6 +13,7 @@ import engine.templates.collections.RueCallback;
 import engine.templates.collections.RueCallbackList;
 import engine.templates.collections.ScreenGraphicList;
 import engine.templates.collections.ViewElements;
+import engine.templates.MouseListener;
 import flash.geom.Matrix;
 
 /**

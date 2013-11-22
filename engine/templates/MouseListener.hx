@@ -1,6 +1,7 @@
 package engine.templates;
 import engine.base.RueObject;
 import engine.systems.MouseInputSystem;
+import engine.templates.collections.MouseListenerList;
 
 /**
  * ...
@@ -20,7 +21,7 @@ class MouseListener extends RueObject
 	{
 		Connection = MouseInputSystem.MouseListeners[Layer].Add(this);
 	}
-	
+
 	public function RemoveFromMouseListener():Void
 	{
 		if (Connection != null)
@@ -34,6 +35,7 @@ class MouseListener extends RueObject
 	{
 		return false;
 	}
+	
 	
 	
 }

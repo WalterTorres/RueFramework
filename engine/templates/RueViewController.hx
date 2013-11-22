@@ -111,6 +111,11 @@ class RueViewController
 		}
 	}
 	
+	public function FixClickRect():Void
+	{
+		_TheView.UpdateClickRec(0, 0);
+	}
+	
 	override public function Update():Void
 	{
 		DoesUpdate = false;

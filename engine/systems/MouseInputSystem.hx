@@ -6,6 +6,7 @@ import engine.helpers.roxstudio.haxe.gesture.RoxGestureEvent;
 import engine.helpers.RueMath;
 import engine.systems.touches.RueTouch;
 import engine.templates.collections.MouseListenerList;
+import engine.templates.MouseListener;
 import engine.World;
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -232,9 +233,10 @@ class MouseInputSystem
 		TouchOne._IsActive = false;
 		FirstTouchDown = false;
 	}
-	
+	public static var DraggedItem:MouseListener = null;
 	private static function OnDrag(A:MouseEvent):Void
 	{
+		DraggedItem = null;
 		//ClickedThisTick = true;
 		if (FirstTouchDown)
 		{

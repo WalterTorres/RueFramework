@@ -160,9 +160,7 @@ class RueScrollView extends RueView
 				_MomemtumY = 0;
 			}
 		}
-		
-		trace(_MomemtumY);
-		
+	
 		//render portion
 		if (_IsHidden) { return; }
 		_OnDraw.TriggerAll();

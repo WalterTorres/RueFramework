@@ -290,6 +290,9 @@ class RueTextField extends RueObject implements IScreenGraphic
 			_DropShadow.x = ParentX + _X + 2;
 			_DropShadow.y = ParentY + _Y + 2;
 		}
+		
+		_Text.width = _Text.textWidth*2;
+		_Text.height = _Text.textHeight*2;
 	}
 	
 	public function SetRotation(Rot:Float):Void 
