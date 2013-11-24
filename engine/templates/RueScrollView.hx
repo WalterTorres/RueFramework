@@ -1,6 +1,7 @@
 package engine.templates;
 import engine.base.RueObject;
 import engine.components.PositionComponent;
+import engine.gameElements.interfaces.IDisplayView;
 import engine.helpers.Profiler;
 import engine.helpers.render.DrawStack;
 import engine.helpers.RueMath;
@@ -197,7 +198,7 @@ class RueScrollView extends RueView
 		_RenderTarget.SetFocusRect(_Position._X, _Position._Y, _Width, _Height);
 	}
 	
-	override public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView 
+	override public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):IDisplayView 
 	{
 		if (!_TakesUserInput) { return null; }
 		if (_ClickRec != null)
@@ -208,7 +209,7 @@ class RueScrollView extends RueView
 			{
 				if (MouseInputSystem.Clicked)
 				{
-					var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X + _CurrentDragX, ParentY + _Position._Y+_CurrentDragY);
+					var Attempt:IDisplayView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X + _CurrentDragX, ParentY + _Position._Y+_CurrentDragY);
 					if ( Attempt == null) //if no children are being clicked then this one is being clicked
 					{
 						return RueScrollSelf;
@@ -226,15 +227,6 @@ class RueScrollView extends RueView
 		}
 		return null;
 	}
-	
-	
-	public function AddGraphicHooked(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Hook:ScreenGraphic = null):RueScrollView
-	{
-		Hook = ScreenGraphic.Create(Desc, Layer, X, Y, Alpha);
-		_Graphics.Add(Hook);
-		return RueScrollSelf;
-	}
-	
 
 	override public function Recycle():Void 
 	{

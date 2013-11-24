@@ -1,5 +1,6 @@
 package engine.templates.collections;
 import engine.base.RueObject;
+import engine.gameElements.interfaces.IDisplayView;
 import engine.helpers.render.DrawStack;
 import engine.templates.RueView;
 
@@ -37,7 +38,7 @@ class ViewElements
 		return Vessel;
 	}
 	
-	public function Add(Element:RueView):RueNodeConnection 
+	public function Add(Element:IDisplayView):RueNodeConnection 
 	{
 		var Addition:ViewElementsNode = ViewElementsNode.Create(Element, Self);
 		var Connection:RueNodeConnection = Element.ConnectToNode(Addition); //this will return a handle to the link itself, this can be cached and told to recycle to remove itself from the list it resides in both sides.
@@ -78,12 +79,12 @@ class ViewElements
 		}
 	}
 	
-	public function CheckInput(X:Float, Y:Float, ParentX:Float, ParentY:Float):RueView
+	public function CheckInput(X:Float, Y:Float, ParentX:Float, ParentY:Float):IDisplayView
 	{
 		var Current:ViewElementsNode = _HeadNode;
 		while (Current != null)
 		{
-			var Result:RueView = Current._Target.CheckScreenInput(X, Y, ParentX, ParentY);
+			var Result:IDisplayView = Current._Target.CheckScreenInput(X, Y, ParentX, ParentY);
 			if ( Result != null)
 			{
 				return Result;
@@ -130,7 +131,7 @@ class ViewElementsNode implements RueNodeConnection
 	var Self:ViewElementsNode;
 	
 	public var _Owner:ViewElements;
-	public var _Target:RueView; 
+	public var _Target:IDisplayView; 
 	public var _TargetNode:RueNodeConnection;
 	
 	public var _NextNode:ViewElementsNode;
@@ -138,7 +139,7 @@ class ViewElementsNode implements RueNodeConnection
 	
 	private function new() { Self = this; }
 	
-	public static function Create(Target:RueView, Owner:ViewElements):ViewElementsNode 
+	public static function Create(Target:IDisplayView, Owner:ViewElements):ViewElementsNode 
 	{
 		var Vessel:ViewElementsNode;
 		if(Head != null)

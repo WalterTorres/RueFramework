@@ -2,6 +2,7 @@ package engine.templates;
 
 import engine.base.Entity;
 import engine.base.EntityGroup;
+import engine.gameElements.interfaces.IDisplayView;
 import engine.helpers.Profiler;
 import engine.helpers.render.DrawStack;
 import engine.systems.MouseInputSystem;
@@ -23,7 +24,7 @@ class RueViewController
 	var Next:RueViewController;
 	var Self:RueViewController;
 	
-	var _TheView:RueView;
+	var _TheView:IDisplayView;
 	var _RenderTarget:DrawStack;
 	public var _IsActivated:Bool;
 	
@@ -44,7 +45,7 @@ class RueViewController
 		
 		return Vessel;
 	}
-	public static function CreateWithView(Group:EntityGroup, RenderTarget:DrawStack, View:RueView):RueViewController
+	public static function CreateWithView(Group:EntityGroup, RenderTarget:DrawStack, View:IDisplayView):RueViewController
 	{
 		var Vessel:RueViewController;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -56,7 +57,7 @@ class RueViewController
 		return Vessel;
 	}
 	
-	public function SetView(TheView:RueView):Void
+	public function SetView(TheView:IDisplayView):Void
 	{
 		if (_TheView != null)
 		{
@@ -66,31 +67,21 @@ class RueViewController
 		_TheView = TheView;
 	}
 	
-	private var UniqueDragging:RueView;
+	private var UniqueDragging:IDisplayView;
 	override public function PreUpdate():Void
 	{
 		if (!_IsActivated) { return; }
 		if (_TheView != null)
 		{
 			_TheView.UpdateClickRec(0, 0);
-			//if (MouseInputSystem.Clicked)
-			//{
-			//	_TheView.CancelDrags();//in case something was being dragged
-			//	var TouchedView:RueView = _TheView.CheckScreenInput(MouseInputSystem.X, MouseInputSystem.Y, 0, 0);
-			//	if (TouchedView != null) //if something was indeed touched
-			//	{
-			//		TouchedView._OnClick.TriggerAll();
-			//	}
-			//}
-			//else 
 			if (MouseInputSystem.Dragging)
 			{
 				if (UniqueDragging == null)
 				{
-					var TouchedView:RueView = _TheView.CheckScreenInput(MouseInputSystem.X, MouseInputSystem.Y, 0, 0);
+					var TouchedView:IDisplayView = _TheView.CheckScreenInput(MouseInputSystem.X, MouseInputSystem.Y, 0, 0);
 					if (TouchedView != null) //if something was indeed touched
 					{
-						if (TouchedView._IsScrollable)
+						if (TouchedView.IsScrollable())
 						{
 							TouchedView.StartDragging();
 							UniqueDragging = TouchedView;

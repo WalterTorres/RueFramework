@@ -2,6 +2,7 @@ package engine.templates;
 
 import engine.base.RueObject;
 import engine.components.PositionComponent;
+import engine.gameElements.interfaces.IDisplayView;
 import engine.helpers.Profiler;
 import engine.helpers.render.DrawStack;
 import engine.helpers.RueMath;
@@ -20,7 +21,7 @@ import flash.geom.Matrix;
  * ...
  * @author Jakegr
  */
-class RueView extends MouseListener
+class RueView extends MouseListener implements IDisplayView
 {
 	static var Head:RueView;
 	var Self:RueView;
@@ -29,7 +30,7 @@ class RueView extends MouseListener
 	var _DrawChildren:ViewElements;
 	public var _Graphics:ScreenGraphicList;
 	var _CameraBound:Bool;
-	public var _ParentView:RueView;
+	public var _ParentView:IDisplayView;
 	public var _Position:PositionComponent;
 	public var _IsHidden:Bool;
 	public var _ClickRec:RueRectangle;
@@ -230,7 +231,7 @@ class RueView extends MouseListener
 	 * @param	ParentY
 	 * @return
 	 */
-	public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):RueView
+	public function CheckScreenInput(ClickX:Float, ClickY:Float, ParentX:Float, ParentY:Float):IDisplayView
 	{
 		if (_ClickRec != null)
 		{
@@ -238,7 +239,7 @@ class RueView extends MouseListener
 			_ClickRec.Y = ParentY + _Position._Y + _CurrentDragY;
 			if (_ClickRec.ContainsFPoint(ClickX, ClickY))
 			{
-				var Attempt:RueView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X, ParentY + _Position._Y);
+				var Attempt:IDisplayView = _DrawChildren.CheckInput(ClickX, ClickY, ParentX + _Position._X, ParentY + _Position._Y);
 				if ( Attempt == null) //if no children are being clicked then this one is being clicked
 				{
 					if (!_TakesUserInput)
@@ -275,20 +276,18 @@ class RueView extends MouseListener
 		return false;
 	}
 	
-	public function AddChildView(Child:RueView):RueView
+	public function AddChildView(Child:IDisplayView):IDisplayView
 	{
-		if (Child._ParentView != null)//if it belongs to another view before adding it to this view, it should be properly removed from it
-		{
-			Child.RemoveFromParentView();
-		}
-		
-		Child._ParentView = Self;
-		Child.SetInputPriority(_InputLayer + 1);
-		var ChildToParentConnection:RueNodeConnection = _DrawChildren.Add(Child);
-		Child._ParentConnection = ChildToParentConnection;
+		Child.RemoveFromParentView(); //if it belongs to another view, remove it from it.
+		Child.SetParentView(Self); //set yourself as the new parent
+		Child.SetInputPriority(_InputLayer + 1); //set the click priority of this view to one higher than yourself.
+		var ChildToParentConnection:RueNodeConnection = _DrawChildren.Add(Child); //get the connection
+		Child.SetChildConnection(ChildToParentConnection); //set the connection in case your child needs to remove itself from you.
 		
 		return Self;
 	}
+	
+	
 	
 	public function AddGraphic(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):RueView
 	{
@@ -304,8 +303,11 @@ class RueView extends MouseListener
 	
 	public function RemoveFromParentView():Void
 	{
-		_ParentConnection.Remove();
-		_ParentConnection = null;
+		if (_ParentConnection != null)
+		{
+			_ParentConnection.Remove();
+			_ParentConnection = null;
+		}
 	}
 	
 	public function AddOnRecycleEvent(OnRes:Void->Void):RueCallback
@@ -360,5 +362,22 @@ class RueView extends MouseListener
 	{
 		Next = Head;
 		Head = Self;
+	}
+	
+	/* INTERFACE engine.gameElements.interfaces.IDisplayView */
+	
+	public function SetParentView(Parent:IDisplayView):Void 
+	{
+		_ParentView = Parent;
+	}
+	
+	public function SetChildConnection(Connection:RueNodeConnection):Void 
+	{
+		_ParentConnection = Connection;
+	}
+	
+	public function IsScrollable():Bool 
+	{
+		return _IsScrollable;
 	}
 }
