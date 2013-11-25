@@ -7,9 +7,11 @@ import engine.components.PositionComponent;
 import engine.gameElements.interfaces.IDisplayView;
 import engine.helpers.Profiler;
 import engine.helpers.render.DrawStack;
+import engine.helpers.render.DrawStackList.DrawStackListNode;
 import engine.helpers.RueMath;
 import engine.helpers.RueRectangle;
 import engine.helpers.TileDesc;
+import engine.helpers.TileSheetEntry;
 import engine.systems.MouseInputSystem;
 import engine.systems.TileRenderSystem;
 import engine.templates.collections.RueCallback;
@@ -18,6 +20,7 @@ import engine.templates.collections.ScreenGraphicList;
 import engine.templates.collections.ViewElements;
 import engine.templates.MouseListener;
 import engine.templates.RueView;
+import flash.display.Sprite;
 
 /**
  * ...
@@ -30,7 +33,9 @@ class RueAdHocView extends Entity implements IDisplayView
 	var RueAdHocViewNext:RueAdHocView;
 	var RueAdHocViewSelf:RueAdHocView;
 	
-	var _TheView:RueView;
+	public var _TheView:RueView;
+	
+	var _DrawStack:DrawStack;
 	
 	private function new() 
 	{
@@ -38,31 +43,29 @@ class RueAdHocView extends Entity implements IDisplayView
 		RueAdHocViewSelf = this;
 	}
 	
-	public static function Create(Group:EntityGroup, Position:PositionComponent = null, Width:Float = 0, Height:Float = 0):RueAdHocView
+	public static function Create(Group:EntityGroup, SPS:TileSheetEntry, Target:Sprite, X:Float, Y:Float, Width:Float = 0, Height:Float = 0):RueAdHocView
 	{
 		var Vessel:RueAdHocView;
 		if(RueAdHocViewHead != null) { Vessel = RueAdHocViewHead; RueAdHocViewHead = RueAdHocViewHead.RueAdHocViewNext; }
 		else { Vessel = new RueAdHocView(); }
 		Vessel.Setup(Group);
-		Vessel._TheView = RueView.Create(Position, Width, Height);
+		Vessel._TheView = RueView.Create(PositionComponent.Create(X, Y), Width, Height);
+		Vessel._DrawStack = DrawStack.Create(SPS, Target);
 		
 		return Vessel;
 	}
 	
-	public function AddGraphic():Void
+	public function AddGraphic(Desc:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0):Void
 	{
-		
-	}
-	
-	public function AddGraphicDirect():Void
-	{
-		
+		_TheView.AddGraphic(Desc, Layer, X, Y);
 	}
 	
 	override public function Recycle():Void
 	{
 		if(!InPool)
 		{
+			_TheView.Recycle();
+			_DrawStack.Recycle();
 			super.Recycle();
 		}
 	}
@@ -73,9 +76,15 @@ class RueAdHocView extends Entity implements IDisplayView
 		RueAdHocViewHead = RueAdHocViewSelf;
 	}
 	
+	override public function Draw():Void 
+	{
+		Render(0, 0, null);
+	}
+	
+	
 	public function Render(X:Float, Y:Float, Canvas:DrawStack):Void 
 	{
-		
+		_TheView.Render(0, 0, _DrawStack);
 	}
 	
 	public function UpdateClickRec(X:Float, Y:Float):Void 
