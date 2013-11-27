@@ -19,6 +19,7 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 	public var _Graphic:GraphicsComponent;
 	public var _X:Float;
 	public var _Y:Float;
+	public var _Animates:Bool;
 	
 	private function new() 
 	{
@@ -27,7 +28,7 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 		Self = this;
 	}
 	
-	public static function Create(GraphicID:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0):ScreenGraphic
+	public static function Create(GraphicID:TileDesc, Layer:Int = 0, X:Float = 0, Y:Float = 0, Alpha:Float = 1.0, Animating:Bool = false):ScreenGraphic
 	{
 		var Vessel:ScreenGraphic;
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
@@ -36,6 +37,7 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 		
 		Vessel._Graphic = GraphicsComponent.Create(GraphicID, null, Layer);
 		Vessel._Graphic.Alpha = Alpha;
+		Vessel._Animates = Animating;
 		Vessel._X = X;
 		Vessel._Y = Y;
 		
@@ -45,6 +47,10 @@ class ScreenGraphic extends RueObject implements IScreenGraphic
 	public function DrawFrom(ParentX:Float, ParentY:Float, Canvas:DrawStack, CameraBound:Bool):Void
 	{
 		_Graphic.TargetCanvas = Canvas;
+		if (_Animates)
+		{
+			_Graphic.Animate();
+		}
 		
 		if (CameraBound)
 		{
