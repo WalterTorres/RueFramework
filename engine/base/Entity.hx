@@ -52,6 +52,10 @@ class Entity extends RueObject
 				else { if (NextEntity != null) { NextEntity.PreviousEntity = null; Group.EntityHead = NextEntity; } else { Group.EntityHead = null; }}
 			}
 		}
+		else
+		{
+			trace("Entity attempted to recycle twice");
+		}
 	}
 	
 	

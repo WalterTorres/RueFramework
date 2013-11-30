@@ -335,6 +335,8 @@ class RueView extends MouseListener implements IDisplayView
 	{
 		if (!InPool)
 		{
+			//Rueobject recycle
+			super.Recycle();
 			_Position.Recycle();
 			if (_ClickRec != null)
 			{
@@ -353,8 +355,11 @@ class RueView extends MouseListener implements IDisplayView
 			_Graphics.RecycleElements();
 			_DrawChildren.Recycle();
 			_Graphics.Recycle();
-			//Rueobject recycle
-			super.Recycle();
+			
+		}
+		else
+		{
+			trace("attempting to recycle twice!");
 		}
 	}
 	

@@ -38,6 +38,10 @@ class RueObject
 			InPool = true;
 			RebirthSystem.Purgatory.Add(SelfRoot);
 		}
+		else
+		{
+			trace("Rue object attempted to recycle twice");
+		}
 	}
 	
 	public function PurgatoryRecycle():Void

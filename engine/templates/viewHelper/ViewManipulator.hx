@@ -35,7 +35,7 @@ class ViewManipulator
 	
 	public var _CurrentlyDoing:MotionStep;
 	var _Target:RueView;
-	var _OnAllSequencesFinished:RueCallbackList;
+	//var _OnAllSequencesFinished:RueCallbackList;
 	var _RecycleConnection:RueCallback;
 	var _TargetWasRecycled:Bool;
 	var _AlreadyGotRidOfConnection:Bool;
@@ -52,7 +52,7 @@ class ViewManipulator
 		if(Head != null) { Vessel = Head; Head = Head.Next; }
 		else { Vessel = new ViewManipulator(); }
 		Vessel.Setup(Group);
-		Vessel._OnAllSequencesFinished = RueCallbackList.Create();
+		//Vessel._OnAllSequencesFinished = RueCallbackList.Create();
 		Vessel._CurrentlyDoing = null;
 		Vessel._Target = Target;
 		Vessel._TargetWasRecycled = false;
@@ -108,11 +108,12 @@ class ViewManipulator
 				//trace("removing the node");
 				_RecycleConnection.Recycle();
 			}
+			
 			_AlreadyGotRidOfConnection = true;
 			
-			_OnAllSequencesFinished.TriggerAll();
+			//_OnAllSequencesFinished.TriggerAll();
 			//_OnAllSequencesFinished.RecycleAll();
-			_OnAllSequencesFinished.Recycle();
+			//_OnAllSequencesFinished.Recycle();
 			super.Recycle();
 		}
 	}
@@ -124,11 +125,11 @@ class ViewManipulator
 	}
 	
 	//{MANIPULATION FUNCTIONS
-	public function StepAddOnSequenceFinished(AddMe:Void->Void):ViewManipulator
-	{
-		_OnAllSequencesFinished.Add(RueCallback.Create(AddMe));
-		return Self;
-	}
+	//public function StepAddOnSequenceFinished(AddMe:Void->Void):ViewManipulator
+	//{
+	//	_OnAllSequencesFinished.Add(RueCallback.Create(AddMe));
+	//	return Self;
+	//}
 	
 	public function StepAddToXY(ToX:Float, ToY:Float, XSpeed:Float = 10, YSpeed:Float = 10):ViewManipulator
 	{
@@ -189,6 +190,19 @@ class ViewManipulator
 		else
 		{
 			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(_Target, _Target._Position._X, _Target._Position._Y, X, Y, OverThisMuchTime, EaseOption), Self);
+		}
+		return Self;
+	}
+	
+	public function StepEaseTowardsFrom( X:Float, Y:Float, FromX:Float, FromY:Float, OverThisMuchTime:Float, EaseOption:Ease):ViewManipulator
+	{
+		if (_CurrentlyDoing != null)
+		{
+			_CurrentlyDoing.AddStep(MotionStep.Create(EasePositionStep.Create(_Target, FromX, FromY, X, Y, OverThisMuchTime, EaseOption), Self));
+		}
+		else
+		{
+			_CurrentlyDoing = MotionStep.Create(EasePositionStep.Create(_Target, FromX, FromY, X, Y, OverThisMuchTime, EaseOption), Self);
 		}
 		return Self;
 	}

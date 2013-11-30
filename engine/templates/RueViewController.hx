@@ -133,7 +133,12 @@ class RueViewController
 				_TheView.Recycle();
 				_TheView = null;
 			}
+			_RenderTarget = null;
 			super.Recycle();
+		}
+		else
+		{
+			trace("recycled twice");
 		}
 	}
 	

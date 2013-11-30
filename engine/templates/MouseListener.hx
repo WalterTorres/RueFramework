@@ -36,6 +36,19 @@ class MouseListener extends RueObject
 		return false;
 	}
 	
+	override public function Recycle():Void 
+	{
+		if (!InPool)
+		{
+			if (Connection != null)
+			{
+				Connection.Remove();
+				Connection = null;
+			}
+			super.Recycle();
+		}
+	}
+	
 	
 	
 }

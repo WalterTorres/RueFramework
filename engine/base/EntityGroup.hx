@@ -83,13 +83,21 @@ class EntityGroup extends RueObject
 	
 	override public function Recycle():Void
 	{
-		super.Recycle();
+		if (!InPool)
+		{
+			super.Recycle();
+			
+			while (EntityHead != null)
+			{
+				EntityHead.Recycle();
+			}
+		}
+	}
+	
+	override public function OnRebirth():Void 
+	{
 		Next = Head;
 		Head = Self;
-		while (EntityHead != null)
-		{
-			EntityHead.Recycle();
-		}
 	}
 		
 	
